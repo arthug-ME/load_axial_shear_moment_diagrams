@@ -1,4 +1,4 @@
-# load_axial_shear_moment_diagrams
+# Load-Axial-Shear-Moment-Diagrams
 ## Project Overview
 Load, axial, shear, and moment diagrams are graphical representations of the internal forces as well as internal bending moments at every point along the length of a beam in response to external forces, moments, and distributed loads.
 Here is an example of the load, shear, and moment diagrams of a **simply supported** beam courtesy of Dr. Erik Hurlen (a simply supported beam is one with a roller and a pin supports on opposite ends):
