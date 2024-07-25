@@ -33,13 +33,13 @@ Bending Moments (*M* in diagrams):
 
 ## Installation
 Clone the repository
-'''
+```
 git clone https://github.com/arthug-ME/load_axial_shear_moment_diagrams.git
-'''
+```
 Install dependencies
-'''
+```
 pip install -r requirements.txt
-'''
+```
 
 ## Example 
 ### Input
