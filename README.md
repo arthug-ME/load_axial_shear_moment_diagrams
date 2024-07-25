@@ -3,6 +3,7 @@
 Load, axial, shear, and moment diagrams are graphical representations of the internal forces as well as internal bending moments at every point along the length of a beam in response to external forces, moments, and distributed loads.
 Here is an example of the load, shear, and moment diagrams of a **simply supported** beam courtesy of Dr. Erik Hurlen:
 ![image](https://github.com/user-attachments/assets/aa0e48a3-a604-4001-ab26-97f184a11f49)
+
 This is a representation of the forces and moments occuring in the beam from this situation:
 ![image](https://github.com/user-attachments/assets/100f00f4-8a93-4602-a2a4-75504bd6eec0)
 load_axial_shear_moment_diagrams aims to generate the load, axial, shear, and moment diagrams given the user input of where forces and moments are and their direction and magnitude. The program will also give information about the maximum absolute values the graphs achieve and their location.
