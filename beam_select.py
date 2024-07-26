@@ -26,7 +26,7 @@ def open_py_file(inputted_number):
         beam_type = "cantilever_beam.py"
     else:
         beam_type = "overhanging_beam.py"
-    script_path = os.path.join(script_directory, 'bean_types', beam_type)
+    script_path = os.path.join(script_directory, 'beam_types', beam_type)
     call(["python", script_path])
 
 def main():
