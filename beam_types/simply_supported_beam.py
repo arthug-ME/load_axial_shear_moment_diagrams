@@ -627,7 +627,7 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
 
         if magnitude < 0:
             ax.arrow(location, 0, 0, -1, head_width=0.1, head_length=0.1, fc='b', ec='b', zorder=2)
-            ax.text(location, -1.2, f"{magnitude} N", ha='center', va='top', color='b', zorder=2)
+            ax.text(location, -1.2, f"{abs(magnitude)} N", ha='center', va='top', color='b', zorder=2)
         elif magnitude > 0:
             ax.arrow(location, 0, 0, 1, head_width=0.1, head_length=0.1, fc='b', ec='b', zorder=2)
             ax.text(location, 1.2, f"{magnitude} N", ha='center', va='bottom', color='b', zorder=2)
@@ -639,7 +639,7 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
     if A_x < 0:
         ax.arrow(initial_axial_force_location, 0, -1, 0, head_width=0.1,
                  head_length=0.1, fc='b', ec='b', zorder=2)
-        ax.text(initial_axial_force_location - 0.5, -0.2, f"{A_x} N",
+        ax.text(initial_axial_force_location - 0.5, -0.2, f"{abs(A_x)} N",
                 ha='center', color='b', zorder=2)
     elif A_x > 0:
         ax.arrow(initial_axial_force_location, 0, 1, 0, head_width=0.1,
@@ -653,7 +653,7 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
 
         if magnitude < 0:
             ax.arrow(location, 0, -1, 0, head_width=0.1, head_length=0.1, fc='b', ec='b', zorder=2)
-            ax.text(location - 0.5, -0.2, f"{magnitude} N", ha='center', color='b', zorder=2)
+            ax.text(location - 0.5, -0.2, f"{abs(magnitude)} N", ha='center', color='b', zorder=2)
         elif magnitude > 0:
             ax.arrow(location, 0, 1, 0, head_width=0.1, head_length=0.1, fc='b', ec='b', zorder=2)
             ax.text(location + 0.5, -0.2, f"{magnitude} N", ha='center', color='b', zorder=2)
@@ -684,7 +684,7 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
 
         # Add the arrow to the plot
         ax.add_patch(arrow)
-        ax.text(location, 0.5, f"{magnitude}N", ha='center', va='top', color='b')
+        ax.text(location, 0.5, f"{abs(magnitude)}N", ha='center', va='top', color='b')
 
     for load in dist_loads:
         start = load['start']
