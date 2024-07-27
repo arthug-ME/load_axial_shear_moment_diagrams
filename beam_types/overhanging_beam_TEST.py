@@ -109,16 +109,15 @@ def moment_diagram(ax, inputted_length, total_v_forces, moments, dist_loads):
     ax.grid(True)
 
 
-def solve_reaction_forces(inputted_length, h_forces, v_forces, moments, dist_loads):
+def solve_reaction_forces(h_forces, v_forces, moments, dist_loads, support_locations):
     rxn = np.empty(shape=(3, 4))
     # The following rows are hardcoded as that is always the form this system of equations
     # will be in. What is missing is the 4th column which will be solved for.
     row1_h = [1, 0, 0, 0]
     row2_v = [0, 1, 1, 0]
-    row3_m = [0, 0, inputted_length, 0]
-    # inputtedLength is used because that is the distance
-    # from A to B (so that is the perpen. distance).
-    # Future versions should use the distance between A and B
+    row3_m = [0, support_locations[0], support_locations[1], 0]
+    # support_location[0] is where the ROLLER support is located
+    # support_location[1] is where teh PIN support is locoated
 
     # This finds the sum of the inputted horizontal forces and then flips the sign to
     # allow it to be inputted as the solution to the system of equations.
@@ -138,10 +137,7 @@ def solve_reaction_forces(inputted_length, h_forces, v_forces, moments, dist_loa
     for moment in moments:
         m_sum += moment['magnitude']
 
-    # This finds the sum of the moments caused by vertical forces about point A
-    # CONSIDER: this simplification where location * magnitude will only work if
-    #           the beam is simply supported. We must consider what will happen
-    #           when there is overhang in the system for V2.0 (RH rule must be applied)
+    # This finds the moment about the LEFT most side of the beam
     force_cross_distance_sum = 0
     for f_x_d in v_forces:
         force_cross_distance_sum += f_x_d['location'] * f_x_d['magnitude']
@@ -189,14 +185,14 @@ def main():
     inputted_length = 30
     h_forces = []
     total_v_forces = [{'location': 0, 'magnitude': -1000}, {'location': 30, 'magnitude': 1000}, {'location': 10, 'magnitude': 2000}]  # {'location': 0, 'magnitude': 2000}, {'location': 12, 'magnitude': 2000}
-    v_forces = []
+    v_forces = [{'location': 0, 'magnitude': -1000}]
     moments = []
     dist_loads = [{'start': 20, 'end': 30, 'function': 200}]
 
     support_locations = support_locations_input(inputted_length)
     print(support_locations)
 
-    rxn_RREF_array = solve_reaction_forces(inputted_length, h_forces, v_forces, moments, dist_loads)
+    rxn_RREF_array = solve_reaction_forces(h_forces, v_forces, moments, dist_loads, support_locations)
     # This stores the return list for the solved rxn forces
 
     print(rxn_RREF_array)
