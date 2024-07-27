@@ -50,9 +50,9 @@ def point_horizontal_forces(inputted_length):
                 print("The location is not in the range of the beam. Please Try again.")
                 continue
         except ValueError:
-            print("Invalid input. Please input only a number.")      
+            print("Invalid input. Please input only a number.")
             continue
-                      
+
         try:
             print("For the direction, enter a positive number if the force is to the right "
                   "and a negative number if the force is to the left")
@@ -67,7 +67,7 @@ def point_horizontal_forces(inputted_length):
         # horizontalForce is a dictionary that stores the information for the location
         # and magnitude of a given force.
         h_forces.append(horizontal_force_info)
-        
+
     return h_forces
 
 
@@ -92,13 +92,13 @@ def point_vertical_forces(inputted_length):
                 print("The location is not in the range of the beam. Please Try again.")
                 continue
         except ValueError:
-            print("Invalid input. Please input only a number.")      
+            print("Invalid input. Please input only a number.")
             continue
-                      
+
         try:
             print("For the direction, enter a positive number if the force is upwards"
                   " and a negative number if the force is downwards")
-            vertical_force_magnitude = float(input("Enter the magnitude and " 
+            vertical_force_magnitude = float(input("Enter the magnitude and "
                                                    "direction of the force: "))
         except ValueError:
             print("Invalid input. Please input only a number.")
@@ -134,13 +134,13 @@ def point_moments(inputted_length):
                 print("The location is not in the range of the beam. Please Try again.")
                 continue
         except ValueError:
-            print("Invalid input. Please input only a number.")      
+            print("Invalid input. Please input only a number.")
             continue
-                      
+
         try:
             print("For the direction, enter a positive number if the moment is counter-clockwise"
                   " and a negative number if the moment is clockwise")
-            moment_magnitude = float(input("Enter the magnitude and " 
+            moment_magnitude = float(input("Enter the magnitude and "
                                            "direction of the moment: "))
         except ValueError:
             print("Invalid input. Please input only a number.")
@@ -228,21 +228,18 @@ def distributed_load(inputted_length):
     return dist_loads
 
 
-# Pre: Accepts the inputtedLength, horizontal forces, vertical forces, and point moments
+# Pre: Accepts the horizontal forces, vertical forces, and point moments
 #      (distributed loads will be programmed later) that the user already inputted
 # Post: This calculates the reaction forces present at the supports and returns an array.
 #       in RREF (which will be easy to extract the reaction values)
 #       Future versions should use the distance between point A and B.
-def solve_reaction_forces(inputted_length, h_forces, v_forces, moments, dist_loads):
+def solve_reaction_forces(h_forces, v_forces, moments, dist_loads):
     rxn = np.empty(shape=(3, 4))
     # The following rows are hardcoded as that is always the form this system of equations
     # will be in. What is missing is the 4th column which will be solved for.
     row1_h = [1, 0, 0, 0]
-    row2_v = [0, 1, 1, 0]
-    row3_m = [0, 0, inputted_length, 0]
-    # inputtedLength is used because that is the distance
-    # from A to B (so that is the perpen. distance).
-    # Future versions should use the distance between A and B
+    row2_v = [0, 1, 0, 0]
+    row3_m = [0, 0, 1, 0]
 
     # This finds the sum of the inputted horizontal forces and then flips the sign to
     # allow it to be inputted as the solution to the system of equations.
@@ -308,6 +305,15 @@ def solve_reaction_forces(inputted_length, h_forces, v_forces, moments, dist_loa
 
 
 # Pre: This accepts the array from solveReactionForces
+# Post:  Finds the initial axial force form the array and puts it into a variable.
+def find_A_x_rxn(rxn_RREF_array):
+    A_x = (rxn_RREF_array[0, 3])
+    # Axial force at the pin support. The value is located
+    # at the 1st row and 4th column of this array
+    return A_x
+
+
+# Pre: This accepts the array from solveReactionForces
 # Post: Finds the initial shear force form the array and puts it into a variable.
 #       This stores the vertical force found at the pin support.
 def find_A_y_rxn(rxn_RREF_array):
@@ -317,23 +323,13 @@ def find_A_y_rxn(rxn_RREF_array):
     return A_y
 
 
-# Pre: This accepts teh array from solveReactionForces
-# Post: Finds the final shear force from the array and puts it into a variable. This stores
-#       the vertical force found at the roller support.
-def find_B_y_rxn(rxn_RREF_array):
-    B_y = (rxn_RREF_array[2, 3])
+# Pre: This accepts the array from solveReactionForces
+# Post: Finds the reaction moment
+def find_M_A_rxn(rxn_RREF_array):
+    M_A = (rxn_RREF_array[2, 3])
     # Initial shear force at the end of the beam. The value is located
     # at the 3rd row and 4th column of this array
-    return B_y
-
-
-# Pre: This accepts the array from solveReactionForces
-# Post:  Finds the initial axial force form the array and puts it into a variable.
-def find_A_x_rxn(rxn_RREF_array):
-    A_x = (rxn_RREF_array[0, 3])
-    # Axial force at the pin support. The value is located
-    # at the 1st row and 4th column of this array
-    return A_x
+    return M_A
 
 
 # Pre: Accepts h_forces, and initial_axial_force
@@ -351,14 +347,13 @@ def find_total_h_forces(h_forces, A_x):
 
 # Pre: Accepts v_forces, initial_shear_force, inputtedLength, final_shear_force
 # Post: This puts the total_v_forces into a list so that it can be easily used.
-def find_total_v_forces(v_forces, A_y, inputted_length, B_y):
+def find_total_v_forces(v_forces, A_y, inputted_length):
     total_v_forces = v_forces.copy()
 
     # IMPORTANT: initial_shear_force_location is created so that when the supports are able
     #            to be moved around, the shear force at the support is not hard coded to be at zero
     initial_shear_force_location = 0
     total_v_forces.append({'location': initial_shear_force_location, 'magnitude': A_y})
-    total_v_forces.append({'location': inputted_length, 'magnitude': B_y})
 
     return total_v_forces
 
@@ -369,7 +364,7 @@ def axial_force_at_point(x, total_h_forces):
     h = 0
     for force in total_h_forces:
         if x >= force["location"]:
-            h += force["magnitude"]
+            h -= force["magnitude"]
 
     return h
 
@@ -405,7 +400,9 @@ def shear_force_at_point(x, total_v_forces, dist_loads):
 # Post: This calculates the vertical force's contribution to the moment at
 #       all points along the beam at position "x".
 #       This returns the moment at all point along the beam with variable "M".
-def moment_at_point(x, total_v_forces, moments):
+def moment_at_point(x, total_v_forces, moments, M_A):
+    reaction_moment = {'location': 0, 'magnitude': M_A}
+    moments.append(reaction_moment)
     M = 0
     for force in total_v_forces:
         if x > force['location']:
@@ -457,7 +454,7 @@ def axial_diagram(ax, inputted_length, h_forces, total_h_forces):
     # This makes the graph
     ax.axhline(y=0, color='k', linestyle='--')
     ax.plot(x_values, y_values, label="Axial Force Diagram", color='b')
-    ax.annotate(f'Max |Force|: {max_y:.2f} kN\nat x = {max_x:.2f} m',
+    ax.annotate(f'Max |Force|: {abs(max_y):.2f} kN\nat x = {max_x:.2f} m',
                 xy=(max_x, max_y), xytext=xytext,
                 arrowprops=dict(facecolor='r', shrink=0.05),
                 fontsize=12, color='r', horizontalalignment='center')
@@ -518,7 +515,7 @@ def shear_diagram(ax, inputted_length, v_forces, total_v_forces, dist_loads):
     # This plots the graph
     ax.plot(x_values, y_values, label="Shear Force Diagram", color='r')
     ax.axhline(y=0, color='k', linestyle='--')
-    ax.annotate(f'Max |Force|: {max_y:.2f} kN\nat x = {max_x:.2f} m',
+    ax.annotate(f'Max |Force|: {abs(max_y):.2f} kN\nat x = {max_x:.2f} m',
                 xy=(max_x, max_y), xytext=xytext,
                 arrowprops=dict(facecolor='red', shrink=0.05),
                 fontsize=12, color='red', horizontalalignment='center')
@@ -594,7 +591,7 @@ def moment_diagram(ax, inputted_length, total_v_forces, moments, v_forces, dist_
         xytext = (max_x, max_y * 1.5)
 
     # Label the maximum absolute value
-    ax.annotate(f'Max |Moment|: {max_y:.2f} kNm\nat x = {max_x:.2f} m',
+    ax.annotate(f'Max |Moment|: {abs(max_y):.2f} kNm\nat x = {max_x:.2f} m',
                 xy=(max_x, max_y),
                 xytext=xytext,
                 arrowprops=dict(facecolor='red', shrink=0.05),
@@ -614,7 +611,7 @@ def moment_diagram(ax, inputted_length, total_v_forces, moments, v_forces, dist_
 # Pre: Takes in h_forces, total_v_forces, moments, and inputtedLength
 # Post: Plots a FBD of the beam otherwise known as the load diagram. This does not consider
 #       loads yet. This is only a 1 dimensional representation
-def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, dist_loads):
+def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, dist_loads, M_A):
     # Draw the beam
     ax.plot([0, inputted_length], [0, 0], 'k-', lw=5)
 
@@ -627,7 +624,7 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
 
         if magnitude < 0:
             ax.arrow(location, 0, 0, -1, head_width=0.1, head_length=0.1, fc='b', ec='b', zorder=2)
-            ax.text(location, -1.2, f"{magnitude} N", ha='center', va='top', color='b', zorder=2)
+            ax.text(location, -1.2, f"{abs(magnitude)} N", ha='center', va='top', color='b', zorder=2)
         elif magnitude > 0:
             ax.arrow(location, 0, 0, 1, head_width=0.1, head_length=0.1, fc='b', ec='b', zorder=2)
             ax.text(location, 1.2, f"{magnitude} N", ha='center', va='bottom', color='b', zorder=2)
@@ -639,7 +636,7 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
     if A_x < 0:
         ax.arrow(initial_axial_force_location, 0, -1, 0, head_width=0.1,
                  head_length=0.1, fc='b', ec='b', zorder=2)
-        ax.text(initial_axial_force_location - 0.5, -0.2, f"{A_x} N",
+        ax.text(initial_axial_force_location - 0.5, -0.2, f"{abs(A_x)} N",
                 ha='center', color='b', zorder=2)
     elif A_x > 0:
         ax.arrow(initial_axial_force_location, 0, 1, 0, head_width=0.1,
@@ -653,7 +650,7 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
 
         if magnitude < 0:
             ax.arrow(location, 0, -1, 0, head_width=0.1, head_length=0.1, fc='b', ec='b', zorder=2)
-            ax.text(location - 0.5, -0.2, f"{magnitude} N", ha='center', color='b', zorder=2)
+            ax.text(location - 0.5, -0.2, f"{abs(magnitude)} N", ha='center', color='b', zorder=2)
         elif magnitude > 0:
             ax.arrow(location, 0, 1, 0, head_width=0.1, head_length=0.1, fc='b', ec='b', zorder=2)
             ax.text(location + 0.5, -0.2, f"{magnitude} N", ha='center', color='b', zorder=2)
@@ -684,7 +681,7 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
 
         # Add the arrow to the plot
         ax.add_patch(arrow)
-        ax.text(location, 0.5, f"{magnitude}N", ha='center', va='top', color='b')
+        ax.text(location, 0.5, f"{abs(magnitude)}N", ha='center', va='top', color='b')
 
     for load in dist_loads:
         start = load['start']
@@ -743,31 +740,35 @@ def main():
     inputted_length = beam_length()  # This stores the return value for the length of the beam
     h_forces = point_horizontal_forces(inputted_length)  # This stores the return list for
     # the horizontal forces.
-    
+
     v_forces = point_vertical_forces(inputted_length)  # This stores the return list for
     # the horizontal forces.
-    
+
     moments = point_moments(inputted_length)
     # This stores the return list for the horizontal forces.
 
     dist_loads = distributed_load(inputted_length)
     # This stores the return list for the distributed loads
 
-    rxn_RREF_array = solve_reaction_forces(inputted_length, h_forces, v_forces, moments, dist_loads)
+    rxn_RREF_array = solve_reaction_forces(h_forces, v_forces, moments, dist_loads)
     # This stores the return list for the solved rxn forces
 
     A_y = find_A_y_rxn(rxn_RREF_array)
     A_x = find_A_x_rxn(rxn_RREF_array)
-    B_y = find_B_y_rxn(rxn_RREF_array)
+    M_A = find_M_A_rxn(rxn_RREF_array)
 
-    total_v_forces = find_total_v_forces(v_forces, A_y, inputted_length, B_y)
+    # This adds the reaction moment at the start of the beam
+    reaction_moment = {'location': 0, 'magnitude': M_A}
+    moments.append(reaction_moment)
+
+    total_v_forces = find_total_v_forces(v_forces, A_y, inputted_length)
     # This stores the return list for the total vertical forces
 
     total_h_forces = find_total_h_forces(h_forces, A_x)
     # This stores the return list for the total h forces
 
     fig, ax = plt.subplots(figsize=(12, 16))
-    load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, dist_loads)
+    load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, dist_loads, M_A)
     # This only prints out the shear and moment graph if there are no axial forces.
     # If there are axial forces, all three graphs will be graphed
     if A_x != 0:
