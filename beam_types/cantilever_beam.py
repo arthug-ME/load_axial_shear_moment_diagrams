@@ -611,7 +611,7 @@ def moment_diagram(ax, inputted_length, total_v_forces, moments, v_forces, dist_
 # Pre: Takes in h_forces, total_v_forces, moments, and inputtedLength
 # Post: Plots a FBD of the beam otherwise known as the load diagram. This does not consider
 #       loads yet. This is only a 1 dimensional representation
-def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, dist_loads, M_A):
+def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, dist_loads):
     # Draw the beam
     ax.plot([0, inputted_length], [0, 0], 'k-', lw=5)
 
@@ -768,7 +768,7 @@ def main():
     # This stores the return list for the total h forces
 
     fig, ax = plt.subplots(figsize=(12, 16))
-    load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, dist_loads, M_A)
+    load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, dist_loads)
     # This only prints out the shear and moment graph if there are no axial forces.
     # If there are axial forces, all three graphs will be graphed
     if A_x != 0:
