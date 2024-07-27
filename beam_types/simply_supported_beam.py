@@ -369,7 +369,7 @@ def axial_force_at_point(x, total_h_forces):
     h = 0
     for force in total_h_forces:
         if x >= force["location"]:
-            h += force["magnitude"]
+            h -= force["magnitude"]
 
     return h
 
@@ -380,7 +380,7 @@ def shear_force_at_point(x, total_v_forces, dist_loads):
     V = 0
     for force in total_v_forces:
         if x >= force['location']:
-            V -= force['magnitude']
+            V += force['magnitude']
 
     # This was the previous version to handle constant functions only. I kept it
     # as it is easy to understand and it can be a reference
