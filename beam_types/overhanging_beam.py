@@ -28,6 +28,37 @@ def beam_length():
         except ValueError:
             print("Invalid input. Please input only a number.")
 
+# Pre: This takes in inputted_length
+# Post: This gets information about the location of the supports.
+#       The user can choose where to put the roller and the pin support.
+#       The user will be repromted if the support is out of the range of the beam
+#       or if they put in something that is not a number.
+def support_locations_input(inputted_length):
+    support_locations = []
+    while True:
+        try:
+            roller_position = float(input("Please input the location of the roller support: "))
+            if roller_position < 0 or roller_position > inputted_length:
+                print("Invalid input. The roller must be along the beam.")
+            else:
+                support_locations.append(roller_position)
+                break
+        except ValueError:
+            print("Invalid input. Please input only a number.")
+
+    while True:
+        try:
+            pin_position = float(input("Please input the location of the pin support: "))
+            if pin_position < 0 or pin_position > inputted_length:
+                print("Invalid input. The pin must be along the beam.")
+            else:
+                support_locations.append(pin_position)
+                break
+        except ValueError:
+            print("Invalid input. Please input only a number.")
+
+    return support_locations
+
 
 # Pre: Takes in inputtedLength to check if the inputted force is within bounds. 
 #      It only accepts numbers and reprompts the user if they input
@@ -233,16 +264,15 @@ def distributed_load(inputted_length):
 # Post: This calculates the reaction forces present at the supports and returns an array.
 #       in RREF (which will be easy to extract the reaction values)
 #       Future versions should use the distance between point A and B.
-def solve_reaction_forces(inputted_length, h_forces, v_forces, moments, dist_loads):
+def solve_reaction_forces(h_forces, v_forces, moments, dist_loads, support_locations):
     rxn = np.empty(shape=(3, 4))
     # The following rows are hardcoded as that is always the form this system of equations
     # will be in. What is missing is the 4th column which will be solved for.
     row1_h = [1, 0, 0, 0]
     row2_v = [0, 1, 1, 0]
-    row3_m = [0, 0, inputted_length, 0]
-    # inputtedLength is used because that is the distance
-    # from A to B (so that is the perpen. distance).
-    # Future versions should use the distance between A and B
+    row3_m = [0, support_locations[0], support_locations[1], 0]
+    # support_location[0] is where the ROLLER support is located
+    # support_location[1] is where teh PIN support is locoated
 
     # This finds the sum of the inputted horizontal forces and then flips the sign to
     # allow it to be inputted as the solution to the system of equations.
@@ -262,10 +292,7 @@ def solve_reaction_forces(inputted_length, h_forces, v_forces, moments, dist_loa
     for moment in moments:
         m_sum += moment['magnitude']
 
-    # This finds the sum of the moments caused by vertical forces about point A
-    # CONSIDER: this simplification where location * magnitude will only work if
-    #           the beam is simply supported. We must consider what will happen
-    #           when there is overhang in the system for V2.0 (RH rule must be applied)
+    # This finds the moment about the LEFT most side of the beam
     force_cross_distance_sum = 0
     for f_x_d in v_forces:
         force_cross_distance_sum += f_x_d['location'] * f_x_d['magnitude']
@@ -280,7 +307,7 @@ def solve_reaction_forces(inputted_length, h_forces, v_forces, moments, dist_loa
     dist_v_sum = 0
     for load in dist_loads:
         dist_v_sum += sp.integrate(load['function'],
-                                   (x, load['start'], load['end']))
+                                  (x, load['start'], load['end']))
     row2_v[3] = -v_sum + dist_v_sum
 
     # This finds the moment effect that the distributed loads have about point A
@@ -310,55 +337,55 @@ def solve_reaction_forces(inputted_length, h_forces, v_forces, moments, dist_loa
 # Pre: This accepts the array from solveReactionForces
 # Post: Finds the initial shear force form the array and puts it into a variable.
 #       This stores the vertical force found at the pin support.
-def find_A_y_rxn(rxn_RREF_array):
-    A_y = (rxn_RREF_array[1, 3])
+def find_roller_rxn(rxn_RREF_array):
+    roller_rxn = (rxn_RREF_array[1, 3])
     # Initial shear force at the start of the beam. The value is located
     # at the 2nd row and 4th column of this array
-    return A_y
+    return roller_rxn
 
 
 # Pre: This accepts teh array from solveReactionForces
 # Post: Finds the final shear force from the array and puts it into a variable. This stores
 #       the vertical force found at the roller support.
-def find_B_y_rxn(rxn_RREF_array):
-    B_y = (rxn_RREF_array[2, 3])
+def find_pin_y_rxn(rxn_RREF_array):
+    pin_y = (rxn_RREF_array[2, 3])
     # Initial shear force at the end of the beam. The value is located
     # at the 3rd row and 4th column of this array
-    return B_y
+    return pin_y
 
 
 # Pre: This accepts the array from solveReactionForces
 # Post:  Finds the initial axial force form the array and puts it into a variable.
-def find_A_x_rxn(rxn_RREF_array):
-    A_x = (rxn_RREF_array[0, 3])
+def find_pin_x_rxn(rxn_RREF_array):
+    pin_x = (rxn_RREF_array[0, 3])
     # Axial force at the pin support. The value is located
     # at the 1st row and 4th column of this array
-    return A_x
+    return pin_x
 
 
 # Pre: Accepts h_forces, and initial_axial_force
 # Post: This puts the total_h_forces into a list so that it can be easily used.
-def find_total_h_forces(h_forces, A_x):
+def find_total_h_forces(h_forces, pin_x, support_locations):
     total_h_forces = h_forces.copy()
 
-    # IMPORTANT: initial_shear_force_location is created so that when the supports are able
-    #            to be moved around, the shear force at the support is not hard coded to be at zero
-    A_x_location = 0
-    total_h_forces.append({'location': A_x_location, 'magnitude': A_x})
+    # Pin is located at support-locations[1]
+    pin_x_location = support_locations[1]
+    total_h_forces.append({'location': pin_x_location, 'magnitude': pin_x})
 
     return total_h_forces
 
 
 # Pre: Accepts v_forces, initial_shear_force, inputtedLength, final_shear_force
 # Post: This puts the total_v_forces into a list so that it can be easily used.
-def find_total_v_forces(v_forces, A_y, inputted_length, B_y):
+def find_total_v_forces(v_forces, roller_rxn, support_locations, pin_y):
     total_v_forces = v_forces.copy()
 
     # IMPORTANT: initial_shear_force_location is created so that when the supports are able
     #            to be moved around, the shear force at the support is not hard coded to be at zero
-    initial_shear_force_location = 0
-    total_v_forces.append({'location': initial_shear_force_location, 'magnitude': A_y})
-    total_v_forces.append({'location': inputted_length, 'magnitude': B_y})
+    roller_location = support_locations[0]
+    pin_location = support_locations[1]
+    total_v_forces.append({'location': roller_location, 'magnitude': roller_rxn})
+    total_v_forces.append({'location': pin_location, 'magnitude': pin_y})
 
     return total_v_forces
 
@@ -369,7 +396,7 @@ def axial_force_at_point(x, total_h_forces):
     h = 0
     for force in total_h_forces:
         if x >= force["location"]:
-            h += force["magnitude"]
+            h -= force["magnitude"]
 
     return h
 
@@ -741,6 +768,8 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
 
 def main():
     inputted_length = beam_length()  # This stores the return value for the length of the beam
+    support_locations = support_locations_input(inputted_length)
+
     h_forces = point_horizontal_forces(inputted_length)  # This stores the return list for
     # the horizontal forces.
     
@@ -753,24 +782,24 @@ def main():
     dist_loads = distributed_load(inputted_length)
     # This stores the return list for the distributed loads
 
-    rxn_RREF_array = solve_reaction_forces(inputted_length, h_forces, v_forces, moments, dist_loads)
+    rxn_RREF_array = solve_reaction_forces(h_forces, v_forces, moments, dist_loads, support_locations)
     # This stores the return list for the solved rxn forces
 
-    A_y = find_A_y_rxn(rxn_RREF_array)
-    A_x = find_A_x_rxn(rxn_RREF_array)
-    B_y = find_B_y_rxn(rxn_RREF_array)
+    roller_rxn = find_roller_rxn(rxn_RREF_array)
+    pin_x = find_pin_x_rxn(rxn_RREF_array)
+    pin_y = find_pin_y_rxn(rxn_RREF_array)
 
-    total_v_forces = find_total_v_forces(v_forces, A_y, inputted_length, B_y)
+    total_v_forces = find_total_v_forces(v_forces, roller_rxn, support_locations, pin_y)
     # This stores the return list for the total vertical forces
 
-    total_h_forces = find_total_h_forces(h_forces, A_x)
+    total_h_forces = find_total_h_forces(h_forces, pin_x, support_locations)
     # This stores the return list for the total h forces
 
     fig, ax = plt.subplots(figsize=(12, 16))
-    load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, dist_loads)
+    load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, pin_x, dist_loads)
     # This only prints out the shear and moment graph if there are no axial forces.
     # If there are axial forces, all three graphs will be graphed
-    if A_x != 0:
+    if pin_x != 0:
         fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(12, 16))
         axial_diagram(ax1, inputted_length, h_forces, total_h_forces)
         shear_diagram(ax2, inputted_length, v_forces, total_v_forces, dist_loads)
