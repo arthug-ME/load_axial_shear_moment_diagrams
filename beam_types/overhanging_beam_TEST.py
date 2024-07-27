@@ -3,6 +3,39 @@ import sympy as sp
 import matplotlib.pyplot as plt
 from scipy import integrate
 
+
+# Pre: This takes in inputted_length
+# Post: This gets information about the location of the supports.
+#       The user can choose where to put the roller and the pin support.
+#       The user will be repromted if the support is out of the range of the beam
+#       or if they put in something that is not a number.
+def support_locations_input(inputted_length):
+    support_locations = []
+    while True:
+        try:
+            roller_position = float(input("Please input the location of the roller support: "))
+            if roller_position < 0 or roller_position > inputted_length:
+                print("Invalid input. The roller must be along the beam.")
+            else:
+                support_locations.append(roller_position)
+                break
+        except ValueError:
+            print("Invalid input. Please input only a number.")
+
+    while True:
+        try:
+            pin_position = float(input("Please input the location of the pin support: "))
+            if pin_position < 0 or pin_position > inputted_length:
+                print("Invalid input. The pin must be along the beam.")
+            else:
+                support_locations.append(pin_position)
+                break
+        except ValueError:
+            print("Invalid input. Please input only a number.")
+
+    return support_locations
+
+
 # Pre: Accepts variable x, h_forces, initial_axial_force
 # Post: This calculates the axial force at all points of x so that it can be plotted
 def axial_force_at_point(x, total_h_forces):
@@ -153,12 +186,15 @@ def solve_reaction_forces(inputted_length, h_forces, v_forces, moments, dist_loa
 def main():
     x = sp.symbols('x')
     # Input data
-    inputted_length = 6
+    inputted_length = 30
     h_forces = []
-    total_v_forces = [{'location': 0, 'magnitude': 8}, {'location': 6, 'magnitude': 16}]  # {'location': 0, 'magnitude': 2000}, {'location': 12, 'magnitude': 2000}
+    total_v_forces = [{'location': 0, 'magnitude': -1000}, {'location': 30, 'magnitude': 1000}, {'location': 10, 'magnitude': 2000}]  # {'location': 0, 'magnitude': 2000}, {'location': 12, 'magnitude': 2000}
     v_forces = []
     moments = []
-    dist_loads = [{'start': 0, 'end': 6, 'function': 8 / 6 * x}]
+    dist_loads = [{'start': 20, 'end': 30, 'function': 200}]
+
+    support_locations = support_locations_input(inputted_length)
+    print(support_locations)
 
     rxn_RREF_array = solve_reaction_forces(inputted_length, h_forces, v_forces, moments, dist_loads)
     # This stores the return list for the solved rxn forces
