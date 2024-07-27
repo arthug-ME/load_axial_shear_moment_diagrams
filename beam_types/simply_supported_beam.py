@@ -457,7 +457,7 @@ def axial_diagram(ax, inputted_length, h_forces, total_h_forces):
     # This makes the graph
     ax.axhline(y=0, color='k', linestyle='--')
     ax.plot(x_values, y_values, label="Axial Force Diagram", color='b')
-    ax.annotate(f'Max |Force|: {max_y:.2f} kN\nat x = {max_x:.2f} m',
+    ax.annotate(f'Max |Force|: {abs(max_y):.2f} kN\nat x = {max_x:.2f} m',
                 xy=(max_x, max_y), xytext=xytext,
                 arrowprops=dict(facecolor='r', shrink=0.05),
                 fontsize=12, color='r', horizontalalignment='center')
@@ -518,7 +518,7 @@ def shear_diagram(ax, inputted_length, v_forces, total_v_forces, dist_loads):
     # This plots the graph
     ax.plot(x_values, y_values, label="Shear Force Diagram", color='r')
     ax.axhline(y=0, color='k', linestyle='--')
-    ax.annotate(f'Max |Force|: {max_y:.2f} kN\nat x = {max_x:.2f} m',
+    ax.annotate(f'Max |Force|: {abs(max_y):.2f} kN\nat x = {max_x:.2f} m',
                 xy=(max_x, max_y), xytext=xytext,
                 arrowprops=dict(facecolor='red', shrink=0.05),
                 fontsize=12, color='red', horizontalalignment='center')
@@ -594,7 +594,7 @@ def moment_diagram(ax, inputted_length, total_v_forces, moments, v_forces, dist_
         xytext = (max_x, max_y * 1.5)
 
     # Label the maximum absolute value
-    ax.annotate(f'Max |Moment|: {max_y:.2f} kNm\nat x = {max_x:.2f} m',
+    ax.annotate(f'Max |Moment|: {abs(max_y):.2f} kNm\nat x = {max_x:.2f} m',
                 xy=(max_x, max_y),
                 xytext=xytext,
                 arrowprops=dict(facecolor='red', shrink=0.05),
