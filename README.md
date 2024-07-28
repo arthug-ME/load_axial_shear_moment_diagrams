@@ -1,14 +1,14 @@
 # Load-Axial-Shear-Moment-Diagrams
 ## Project Overview
 Load, axial, shear, and moment diagrams are graphical representations of the internal forces as well as internal bending moments at every point along the length of a beam in response to external forces, moments, and distributed loads.
-Here is an example of the load, shear, and moment diagrams of a **simply supported** beam courtesy of Dr. Erik Hurlen (a simply supported beam is one with a roller and a pin supports on opposite ends):
+Here is an example of the load, shear, and moment diagrams of a **simply supported** beam courtesy of Dr. Erik Hurlen:
 
 ![image](https://github.com/user-attachments/assets/aa0e48a3-a604-4001-ab26-97f184a11f49)
 
 This is a representation of the forces and moments occuring in the beam from this situation:
 ![image](https://github.com/user-attachments/assets/100f00f4-8a93-4602-a2a4-75504bd6eec0)
 
-load_axial_shear_moment_diagrams aims to generate the load, axial, shear, and moment diagrams given the user input of where forces and moments are and their direction and magnitude. The program will also give information about the maximum absolute values the graphs achieve and their location.
+load_axial_shear_moment_diagrams aims to generate the load, axial, shear, and moment diagrams for the three beam types given the user input of where forces and moments are and their direction and magnitude. The program will also give information about the maximum absolute values the graphs achieve and their location.
 
 ## What are Load Diagrams, Axial forces, Shear forces, and Bending Moments?
 Load Diagrams:
@@ -34,6 +34,21 @@ Bending Moments (*M* in diagrams):
 - External forces can cause the beam to bend (this is a moment)
 - The bending moment diagram shows the bending moment at all points such that the beam does not bend 
 
+## What are the Three Beam Types?
+*Image from [SkyCiv.com](https://skyciv.com/docs/tutorials/beam-tutorials/types-of-beams/)*
+
+![image](https://github.com/user-attachments/assets/93cf872d-168a-4ab7-9338-66c4f812395a)
+
+### Simply Supported Beams
+A simply supported beam is one where a pin support and a roller support are placed on opposite ends of the beam. This program will only deal with beams with a pin on the left side of the beam and a roller on the right side. If the roller needs to be on the left and the pin on the right, use overhanging_beam.py and place the supports in their necessary spots.
+
+### Cantilever Beams
+A cantilever beam is one that is attached to the wall using a fixed support. This support prevents horizontal forces, vertical, and rotational movements.
+
+### Overhanging Beams
+An overhanging beam is one supported with two supports, but one or more supports are not placed at the ends of the beam. This program only deals with statically determinate beams, so a roller support and a pin support are chosen.
+
+
 ## Installation
 Clone the repository
 ```
@@ -46,7 +61,9 @@ pip install -r requirements.txt
 
 ## Example 
 ### Input
-![image](https://github.com/user-attachments/assets/950ccb41-f801-490f-a7fb-ea9000449fa3)
+![image](https://github.com/user-attachments/assets/524bfb81-e30f-4546-86dd-3caea90fc7d5)
+![image](https://github.com/user-attachments/assets/ebbb3155-8a64-4565-9d55-5021eca8f55d)
+
 ### Output
 ![image](https://github.com/user-attachments/assets/6387d368-a310-443d-8bdd-b177ad6da391)
 ![image](https://github.com/user-attachments/assets/1101a178-20c7-4552-bdbc-c2f6c33e2272)
