@@ -13,11 +13,22 @@ from matplotlib.patches import FancyArrowPatch
 from scipy import integrate
 
 
+# Pre: Accepts nothing. Only accepts either the string "metric" or the string "imperial"
+# Post: This prompts the user to input what unit system they will be using
+def unit_system_type():
+    while True:
+        unit_system = input('Please input the unit system you need (Enter "metric" or "imperial"): ').strip().lower()
+        if unit_system not in ["metric", "imperial"]:
+            print("Invalid input. Please try again.")
+        else:
+            return unit_system
+
 # Pre: Accepts nothing. Only accepts positive numbers and will reprompt the user if
 #      they enter anything else
 # Post: This prompts the user to input the length of the beam and then returns the length as a
 # #     float value.
 def beam_length():
+    print()
     while True:
         try:
             inputted_length = float(input("Please input the length of the beam: "))
@@ -420,7 +431,10 @@ def moment_at_point(x, total_v_forces, moments):
 # Pre: Accepts inputtedLength, v_forces, initial_shear_force.
 # Post: This plots the axial force diagram based on what the user inputted for horizontal forces.
 #       It uses matplotlib for the graph.
-def axial_diagram(ax, inputted_length, h_forces, total_h_forces):
+def axial_diagram(ax, inputted_length, h_forces, total_h_forces, unit_system):
+    length_unit = 'm' if unit_system == 'metric' else 'ft'
+    force_unit = 'N' if unit_system == 'metric' else 'lb'
+
     x_values = np.linspace(-1e-10, inputted_length, 1000)
     # -1e-10 is here so that the initial jump is correctly displayed. If we started
     # at x = 0, there will be no space to plot the initial jump
@@ -431,7 +445,7 @@ def axial_diagram(ax, inputted_length, h_forces, total_h_forces):
         location = force['location']
         magnitude = force['magnitude']
         ax.axvline(x=location, linestyle='--',
-                   label=f'Axial Force at {location} m, {magnitude} kN')
+                   label=f'Axial Force at {location} {length_unit}, {magnitude} {force_unit}')
 
     # Finds the maximum absolute value and its x value
     max_index = np.argmax(np.abs(y_values))
@@ -457,13 +471,13 @@ def axial_diagram(ax, inputted_length, h_forces, total_h_forces):
     # This makes the graph
     ax.axhline(y=0, color='k', linestyle='--')
     ax.plot(x_values, y_values, label="Axial Force Diagram", color='b')
-    ax.annotate(f'Max |Force|: {abs(max_y):.2f} kN\nat x = {max_x:.2f} m',
+    ax.annotate(f'Max |Force|: {abs(max_y):.2f} {force_unit}\nat x = {max_x:.2f} {length_unit}',
                 xy=(max_x, max_y), xytext=xytext,
                 arrowprops=dict(facecolor='r', shrink=0.05),
                 fontsize=12, color='r', horizontalalignment='center')
     ax.set_title("Axial Force Diagram")
-    ax.set_xlabel("Position (m)")
-    ax.set_ylabel("Axial Force (kN)")
+    ax.set_xlabel(f"Position ({length_unit})")
+    ax.set_ylabel(f"Axial Force ({force_unit})")
     ax.legend()
     ax.grid(True)
 
@@ -471,7 +485,10 @@ def axial_diagram(ax, inputted_length, h_forces, total_h_forces):
 # Pre: Accepts inputtedLength, v_forces, initial_shear_force.
 # Post: This plots the shear force diagram based on what the user inputted for vertical forces.
 #       It uses matplotlib for the graph.
-def shear_diagram(ax, inputted_length, v_forces, total_v_forces, dist_loads):
+def shear_diagram(ax, inputted_length, v_forces, total_v_forces, dist_loads, unit_system):
+    length_unit = 'm' if unit_system == 'metric' else 'ft'
+    force_unit = 'N' if unit_system == 'metric' else 'lb'
+
     x_values = np.linspace(-1e-10, inputted_length, 1000)
     # -1e-10 is here so that the initial jump is correctly displayed. If we started
     # at x = 0, there will be no space to plot the initial jump
@@ -482,7 +499,7 @@ def shear_diagram(ax, inputted_length, v_forces, total_v_forces, dist_loads):
         location = force['location']
         magnitude = force['magnitude']
         ax.axvline(x=location, linestyle='--',
-                   label=f'Shear Force at {location} m, {magnitude} kN')
+                   label=f'Shear Force at {location} {length_unit}, {magnitude} {force_unit}')
 
     # This plots a vertical line for the start and end of distributed loads
     for load in dist_loads:
@@ -490,9 +507,11 @@ def shear_diagram(ax, inputted_length, v_forces, total_v_forces, dist_loads):
         end = load['end']
         function = load['function']
         ax.axvline(x=start, linestyle='--', color='purple',
-                   label=f'Distributed Load start at {start} m, {function} kN/m')
+                   label=f'Distributed Load start at {start} {length_unit}, '
+                         f'{function} {force_unit}/{length_unit}')
         ax.axvline(x=end, linestyle='--', color='purple',
-                   label=f'Distributed Load end at {end} m, {function} kN/m')
+                   label=f'Distributed Load end at {end} {length_unit}, '
+                         f'{function} {force_unit}/{length_unit}')
 
     # Finds the maximum absolute value and its x value
     max_index = np.argmax(np.abs(y_values))
@@ -518,13 +537,13 @@ def shear_diagram(ax, inputted_length, v_forces, total_v_forces, dist_loads):
     # This plots the graph
     ax.plot(x_values, y_values, label="Shear Force Diagram", color='r')
     ax.axhline(y=0, color='k', linestyle='--')
-    ax.annotate(f'Max |Force|: {abs(max_y):.2f} kN\nat x = {max_x:.2f} m',
+    ax.annotate(f'Max |Force|: {abs(max_y):.2f} {force_unit}\nat x = {max_x:.2f} {length_unit}',
                 xy=(max_x, max_y), xytext=xytext,
                 arrowprops=dict(facecolor='red', shrink=0.05),
                 fontsize=12, color='red', horizontalalignment='center')
     ax.set_title("Shear Force Diagram")
-    ax.set_xlabel("Position (m)")
-    ax.set_ylabel("Shear Force (kN)")
+    ax.set_xlabel(f"Position ({length_unit})")
+    ax.set_ylabel(f"Shear Force ({force_unit})")
     ax.legend()
     ax.grid(True)
 
@@ -740,6 +759,7 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
 
 
 def main():
+    unit_system = unit_system_type()
     inputted_length = beam_length()  # This stores the return value for the length of the beam
     h_forces = point_horizontal_forces(inputted_length)  # This stores the return list for
     # the horizontal forces.
@@ -772,12 +792,12 @@ def main():
     # If there are axial forces, all three graphs will be graphed
     if A_x != 0:
         fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(12, 16))
-        axial_diagram(ax1, inputted_length, h_forces, total_h_forces)
-        shear_diagram(ax2, inputted_length, v_forces, total_v_forces, dist_loads)
+        axial_diagram(ax1, inputted_length, h_forces, total_h_forces, unit_system)
+        shear_diagram(ax2, inputted_length, v_forces, total_v_forces, dist_loads, unit_system)
         moment_diagram(ax3, inputted_length, total_v_forces, moments, v_forces, dist_loads)
     else:
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 12))
-        shear_diagram(ax1, inputted_length, v_forces, total_v_forces, dist_loads)
+        shear_diagram(ax1, inputted_length, v_forces, total_v_forces, dist_loads, unit_system)
         moment_diagram(ax2, inputted_length, total_v_forces, moments, v_forces, dist_loads)
 
     # This avoids overlapping of text
