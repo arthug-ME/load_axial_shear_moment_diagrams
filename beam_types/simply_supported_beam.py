@@ -1,4 +1,4 @@
-x# Arthur Gim
+# Arthur Gim
 # 7/9/2024
 
 # This is a program about generating load, axial, shear, and moment graphs based on external forces
