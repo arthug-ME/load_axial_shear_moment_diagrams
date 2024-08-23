@@ -1,4 +1,4 @@
-# Arthur Gim
+x# Arthur Gim
 # 7/9/2024
 
 # This is a program about generating load, axial, shear, and moment graphs based on external forces
@@ -716,7 +716,7 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
 
         # Add the arrow to the plot
         ax.add_patch(arrow)
-        ax.text(location, 0.5, f"{abs(magnitude)} {force_unit}{length_unit}", ha='center', va='top', color='b')
+        ax.text(location, 0.5, f"{abs(magnitude)} {force_unit}*{length_unit}", ha='center', va='top', color='b')
 
     for load in dist_loads:
         start = load['start']
