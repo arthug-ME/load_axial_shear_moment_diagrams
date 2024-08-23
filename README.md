@@ -70,11 +70,12 @@ pip install -r requirements.txt
 
 ## Using Distributed Load Functions
 This program was made to handle any type of function as long as it is inputted in a format that matplotlib can graph (i.e. *w(x) = 3x* is WRONG but *w(x) = 3 * x* is CORRECT). Here is an example where *w(x) = 120 * sqrt(x/2)* is used.
-![image](https://github.com/user-attachments/assets/ca15ffcb-7b83-4ad9-bb7c-cd38d3f1452d)
-![image](https://github.com/user-attachments/assets/2eb9b2aa-41ba-422a-9949-94bd21840baf)
+![image](https://github.com/user-attachments/assets/22538725-0da8-4fb2-9eb1-4f50b2ee2a95)
+![image](https://github.com/user-attachments/assets/1503b511-a6ec-43cc-bc86-13d1c6817ca7)
 
-It is important to shift the function as needed. If we wanted a triangular distributed load that increases by 2 kN / m on the interval from 3 to 6, we would input *w(x) = 2 * (x - 3)* and NOT *w(x) = 2 * x*. 
-![image](https://github.com/user-attachments/assets/050a07df-d52c-4428-bb2d-97f5d2c0e9b3)
+It is important to shift the function as needed. If we wanted a triangular distributed load that increases by 2 N / m on the interval from 3 to 6, we would input *w(x) = 2 * (x - 3)* and NOT *w(x) = 2 * x*. 
+![image](https://github.com/user-attachments/assets/df4ef1de-a385-419b-b61d-6128ab9d08e7)
+
 
 
 
