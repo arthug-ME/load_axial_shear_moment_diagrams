@@ -61,12 +61,12 @@ pip install -r requirements.txt
 
 ## Example 
 ### Input
-![image](https://github.com/user-attachments/assets/524bfb81-e30f-4546-86dd-3caea90fc7d5)
-![image](https://github.com/user-attachments/assets/ebbb3155-8a64-4565-9d55-5021eca8f55d)
+![image](https://github.com/user-attachments/assets/61fae053-9da5-4349-90d2-f7f9a0136a61)
+![image](https://github.com/user-attachments/assets/f2fe7239-9193-47fd-bbc0-1002488dc6ef)
 
 ### Output
-![image](https://github.com/user-attachments/assets/8ba7c20a-b252-4fe4-bdfb-4b6e64c44482)
-![image](https://github.com/user-attachments/assets/a48ab41f-c3b4-4036-a5db-90af903e22ee)
+![image](https://github.com/user-attachments/assets/6e591c48-a84e-4db8-bc2b-d2bb519e413b)
+![image](https://github.com/user-attachments/assets/df2b5530-92d5-4cc5-906b-c21b8c2df44b)
 
 ## Using Distributed Load Functions
 This program was made to handle any type of function as long as it is inputted in a format that matplotlib can graph (i.e. *w(x) = 3x* is WRONG but *w(x) = 3 * x* is CORRECT). Here is an example where *w(x) = 120 * sqrt(x/2)* is used.
