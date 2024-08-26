@@ -828,17 +828,18 @@ def main():
 
     fig, ax = plt.subplots(figsize=(12, 16))
     load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, pin_x, dist_loads, unit_system)
+
+    if h_forces == []:
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 12))
+        shear_diagram(ax1, inputted_length, v_forces, total_v_forces, dist_loads, unit_system)
+        moment_diagram(ax2, inputted_length, total_v_forces, moments, v_forces, dist_loads, unit_system)
     # This only prints out the shear and moment graph if there are no axial forces.
     # If there are axial forces, all three graphs will be graphed
-    if h_forces != []:
+    else:
         fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(12, 16))
         axial_diagram(ax1, inputted_length, h_forces, total_h_forces, unit_system)
         shear_diagram(ax2, inputted_length, v_forces, total_v_forces, dist_loads, unit_system)
         moment_diagram(ax3, inputted_length, total_v_forces, moments, v_forces, dist_loads, unit_system)
-    else:
-        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 12))
-        shear_diagram(ax1, inputted_length, v_forces, total_v_forces, dist_loads, unit_system)
-        moment_diagram(ax2, inputted_length, total_v_forces, moments, v_forces, dist_loads, unit_system)
 
     # This avoids overlapping of text
     plt.tight_layout(pad=3.0)
