@@ -716,7 +716,7 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
 
         # Add the arrow to the plot
         ax.add_patch(arrow)
-        ax.text(location, 0.5, f"{abs(magnitude)} {force_unit}{length_unit}", ha='center', va='top', color='b')
+        ax.text(location, 0.5, f"{abs(magnitude)} {force_unit}*{length_unit}", ha='center', va='top', color='b')
 
     for load in dist_loads:
         start = load['start']
