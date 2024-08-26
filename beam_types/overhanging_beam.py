@@ -825,7 +825,7 @@ def main():
     load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, pin_x, dist_loads, unit_system)
     # This only prints out the shear and moment graph if there are no axial forces.
     # If there are axial forces, all three graphs will be graphed
-    if pin_x != 0:
+    if h_forces != []:
         fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(12, 16))
         axial_diagram(ax1, inputted_length, h_forces, total_h_forces, unit_system)
         shear_diagram(ax2, inputted_length, v_forces, total_v_forces, dist_loads, unit_system)
