@@ -280,11 +280,15 @@ def solve_reaction_forces(h_forces, v_forces, moments, dist_loads, support_locat
     rxn = np.empty(shape=(3, 4))
     # The following rows are hardcoded as that is always the form this system of equations
     # will be in. What is missing is the 4th column which will be solved for.
+
+    roller_location = support_locations[0]
+    pin_location = support_locations[1]
+    # support_location[0] is where the ROLLER support is located
+    # support_location[1] is where the PIN support is located
+
     row1_h = [1, 0, 0, 0]
     row2_v = [0, 1, 1, 0]
-    row3_m = [0, support_locations[0], support_locations[1], 0]
-    # support_location[0] is where the ROLLER support is located
-    # support_location[1] is where teh PIN support is locoated
+    row3_m = [0, roller_location, pin_location, 0]
 
     # This finds the sum of the inputted horizontal forces and then flips the sign to
     # allow it to be inputted as the solution to the system of equations.
