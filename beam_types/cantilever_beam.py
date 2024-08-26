@@ -577,7 +577,7 @@ def moment_diagram(ax, inputted_length, total_v_forces,
         magnitude = force['magnitude']
         plt.axvline(x=location, linestyle='--',
                     label=f'Shear Force at {location} {length_unit}, '
-                          f'{magnitude} {force_unit}*{length_unit}')
+                          f'{magnitude} {length_unit}*{force_unit}')
 
     # This plots a vertical line for the start and end of distributed loads
     for load in dist_loads:
@@ -597,7 +597,7 @@ def moment_diagram(ax, inputted_length, total_v_forces,
         magnitude = moment['magnitude']
         plt.axvline(x=location, linestyle='--', color='red',
                     label=f'Moment at {location} {length_unit}, '
-                          f'{magnitude} {force_unit}*{length_unit}')
+                          f'{magnitude} {length_unit}*{force_unit}')
 
     # Find the maximum absolute value and its corresponding x value
     max_index = np.argmax(np.abs(moment_values))
@@ -622,7 +622,7 @@ def moment_diagram(ax, inputted_length, total_v_forces,
 
     # Label the maximum absolute value
     ax.annotate(f'Max |Moment|: {abs(max_y):.2f} '
-                f'{force_unit}*{length_unit}\nat x = {max_x:.2f} {length_unit}',
+                f'{length_unit}*{force_unit}\nat x = {max_x:.2f} {length_unit}',
                 xy=(max_x, max_y),
                 xytext=xytext,
                 arrowprops=dict(facecolor='red', shrink=0.05),
@@ -634,7 +634,7 @@ def moment_diagram(ax, inputted_length, total_v_forces,
     ax.plot(x_values, moment_values, label="Moment Diagram", color='g')
     ax.set_title("Moment Diagram")
     ax.set_xlabel(f"Position ({length_unit})")
-    ax.set_ylabel(f"Moment ({force_unit}*{length_unit})")
+    ax.set_ylabel(f"Moment ({length_unit}*{force_unit})")
     ax.legend()
     ax.grid(True)
 
@@ -720,7 +720,7 @@ def load_diagram(ax, h_forces, total_v_forces, moments,
 
         # Add the arrow to the plot
         ax.add_patch(arrow)
-        ax.text(location, 0.5, f"{abs(magnitude)} {force_unit}*{length_unit}",
+        ax.text(location, 0.5, f"{abs(magnitude)} {length_unit}*{force_unit}",
                 ha='center', va='top', color='b')
 
     for load in dist_loads:
