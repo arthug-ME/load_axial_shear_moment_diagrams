@@ -40,6 +40,7 @@ def beam_length():
         except ValueError:
             print("Invalid input. Please input only a number.")
 
+
 # Pre: This takes in inputted_length
 # Post: This gets information about the location of the supports.
 #       The user can choose where to put the roller and the pin support.
