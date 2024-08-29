@@ -790,7 +790,6 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
 
     # Hide the y-axis
     ax.get_yaxis().set_visible(False)
-    ax.get_yaxis().set_visible(False)
 
     plt.grid(True)
 
