@@ -642,7 +642,9 @@ def moment_diagram(ax, inputted_length, total_v_forces, moments,
 
 # Pre: Accepts dist_loads and a variable indicating our desired range for graphing the functions
 #      We want the functions to be between [-2,2] in the y direction
-# Post:
+# Post: Finds the max value that any function reaches and scales all the functions down accordingly
+#       so that all the functions ranges are between [-2,2] while keeping relative heights
+#       the same
 def scale_functions(dist_loads, target_max=2):
     max_values = []
 
@@ -767,7 +769,6 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
             func = sp.lambdify(x, function, 'numpy')
             y_vals = func(x_vals)
 
-
         # Distributed load annotations
         midpoint = (start + end) / 2
         function_text = f"Function: w(x) = {function} {force_unit}/{length_unit}"
@@ -833,7 +834,6 @@ def main():
     fig, ax = plt.subplots(figsize=(12, 16))
     load_diagram(ax, h_forces, total_v_forces, moments, inputted_length,
                  A_x, scaled_loads, unit_system)
-
 
     if h_forces == []:
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 12))
