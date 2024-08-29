@@ -770,7 +770,7 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
 
         # Distributed load annotations
         midpoint = (start + end) / 2
-        function_text = f"Function: w(x) = {function} {force_unit}/{length_unit}"
+        function_text = f"Function: w(x) = {function.evalf(3)} {force_unit}/{length_unit}"
         ax.text(midpoint, 2.1, function_text, ha='center', va='bottom', color='red', fontsize=12)
 
         # Add arrows. The arrows start on the function line and end on the beam (x-axis)
