@@ -15,8 +15,8 @@ Load Diagrams:
 - Essentially a Free-Body Diagram of the beam
 - It shows where the external forces and moments are applied
 
-For a system to be in equilibrium, external forces must be balanced by an internal force as stated by Newton's 3rd law
-- Axial forces, shear forces, and bending moments are 3rd law force pairs to external forces and moments
+For a system to be in equilibrium, there must be no net forces
+- Axial forces, shear forces, and bending moments all sum to zero in equilibrium by Newton's Second Law 
 
 
 Axial Forces (*N* in diagrams):
