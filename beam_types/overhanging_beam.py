@@ -481,6 +481,13 @@ def axial_diagram(ax, inputted_length, h_forces, total_h_forces, unit_system):
         ax.axvline(x=location, linestyle='--',
                    label=f'Axial Force at {location} {length_unit}, {magnitude} {force_unit}')
 
+    # This plots a vertical line for the pin reaction force
+    pin_x = total_h_forces[-1]
+    location = pin_x['location']
+    magnitude = pin_x['magnitude']
+    ax.axvline(x=location, linestyle='--', color='red',
+               label=f'Horizontal Reaction Force at {location} m, {magnitude} N')
+
     # Finds the maximum absolute value and its x value
     max_index = np.argmax(np.abs(y_values))
     max_x = x_values[max_index]
@@ -534,6 +541,14 @@ def shear_diagram(ax, inputted_length, v_forces, total_v_forces, dist_loads, uni
         magnitude = force['magnitude']
         ax.axvline(x=location, linestyle='--',
                    label=f'Shear Force at {location} {length_unit}, {magnitude} {force_unit}')
+
+    # Plot the last two forces (roller and pin reactions)
+    # The roller and pin reactions are appended to the end of the dictionary
+    for force in total_v_forces[-2:]:
+        location = force['location']
+        magnitude = force['magnitude']
+        ax.axvline(x=location, linestyle='--', color='blue',
+                   label=f'Vertical Reaction Force at {location} m, {magnitude} N')
 
     # This plots a vertical line for the start and end of distributed loads
     for load in dist_loads:
@@ -608,6 +623,14 @@ def moment_diagram(ax, inputted_length, total_v_forces, moments, v_forces, dist_
         magnitude = force['magnitude']
         plt.axvline(x=location, linestyle='--',
                     label=f'Shear Force at {location} {length_unit}, {magnitude} {length_unit}*{force_unit}')
+
+    # Plot the last two forces (roller and pin reactions)
+    # The roller and pin reaction are appended to the end of the dictionary
+    for force in total_v_forces[-2:]:
+        location = force['location']
+        magnitude = force['magnitude']
+        ax.axvline(x=location, linestyle='--', color='blue',
+                   label=f'Vertical Reaction Force at {location} m, {magnitude} N')
 
     # This plots a vertical line for the start and end of distributed loads
     for load in dist_loads:
@@ -708,7 +731,7 @@ def scale_functions(dist_loads, target_max=2):
 # Pre: Takes in h_forces, total_v_forces, moments, and inputtedLength
 # Post: Plots a FBD of the beam otherwise known as the load diagram. This does not consider
 #       loads yet. This is only a 1 dimensional representation
-def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, dist_loads, unit_system):
+def load_diagram(ax, total_h_forces, total_v_forces, moments, inputted_length, dist_loads, unit_system):
     length_unit = 'm' if unit_system == 'metric' else 'ft'
     force_unit = 'N' if unit_system == 'metric' else 'lb'
 
@@ -726,22 +749,7 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
             ax.arrow(location, 0, 0, 1, head_width=0.1, head_length=0.1, fc='b', ec='b', zorder=2)
             ax.text(location, 1.2, f"{magnitude} {force_unit}", ha='center', va='bottom', color='b', zorder=2)
 
-    # IMPORTANT: initial_shear_force_location is created so that when the supports are able to
-    #            be moved around, the location of the shear force at the support is not hard
-    #            coded to be 0 m on the beam. This is to help future designs
-    initial_axial_force_location = 0
-    if A_x < 0:
-        ax.arrow(initial_axial_force_location, 0, -1, 0, head_width=0.1,
-                 head_length=0.1, fc='b', ec='b', zorder=2)
-        ax.text(initial_axial_force_location - 0.5, -0.2, f"{abs(A_x)} {force_unit}",
-                ha='center', color='b', zorder=2)
-    elif A_x > 0:
-        ax.arrow(initial_axial_force_location, 0, 1, 0, head_width=0.1,
-                 head_length=0.1, fc='b', ec='b', zorder=2)
-        ax.text(initial_axial_force_location + 0.5, -0.2, f"{A_x} {force_unit}",
-                ha='center', color='b', zorder=2)
-
-    for force in h_forces:
+    for force in total_h_forces:
         location = force['location']
         magnitude = force['magnitude']
 
@@ -860,7 +868,7 @@ def main():
     # stores the scaled functions
 
     fig, ax = plt.subplots(figsize=(12, 16))
-    load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, pin_x, scaled_loads, unit_system)
+    load_diagram(ax, total_h_forces, total_v_forces, moments, inputted_length, scaled_loads, unit_system)
 
     if h_forces == []:
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 12))
