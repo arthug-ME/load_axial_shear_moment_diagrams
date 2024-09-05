@@ -15,24 +15,24 @@ Load Diagrams:
 - Essentially a Free-Body Diagram of the beam
 - It shows where the external forces and moments are applied
 
-For a system to be in equilibrium, external forces must be balanced by an internal force as stated by Newton's 3rd law
-- Axial forces, shear forces, and bending moments are 3rd law force pairs to external forces and moments
+For a system to be in equilibrium, there must be no net forces
+- Axial forces, shear forces, and bending moments all sum to zero in equilibrium by Newton's Second Law 
 
 
 Axial Forces (*N* in diagrams):
-- The internal compression or tension forces along the length of the beam
+- Axial forces are internal compression or tension forces along the length of the beam
 - External forces can cause the beam to stretch or compress 
-- The axial force diagram shows the internal forces at all points such that stretching or compressing do not occur
+- The axial force diagram shows the internal horizontal forces at all points 
 
 Shear Forces (*V* in diagrams):
-- The internal forces that act perpendicular to the beam
+- Shear forces are the internal forces that act perpendicular to the beam
 - External forces can cause the beam to slide or deform one part of the beam relative to the other part of the beam
-- The shear force diagram shows the internal forces at all points such that the beam does not slide or shear in two
+- The shear force diagram shows the internal vertical forces at all points 
 
 Bending Moments (*M* in diagrams):
-- The internal bending moments along the beam 
+- Bending moments are the internal bending moments along the beam 
 - External forces can cause the beam to bend (this is a moment)
-- The bending moment diagram shows the bending moment at all points such that the beam does not bend 
+- The bending moment diagram shows the bending moment at all points 
 
 ## What are the Three Beam Types?
 *Image from [SkyCiv.com](https://skyciv.com/docs/tutorials/beam-tutorials/types-of-beams/)*
