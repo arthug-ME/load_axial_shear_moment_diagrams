@@ -3,7 +3,8 @@
 
 # This is a program about generating load, axial, shear, and moment graphs based on external forces
 # acted on a simply supported beam. A simply supported beam is one that is statically determinate 
-# and rests on two supports. The graphs are generated based on the external point forces, 
+# and rests on two supports, a roller and a pin, on opposite ends of the beam.
+# The graphs are generated based on the external point forces,
 # moments, and distributed loads.
 
 import numpy as np

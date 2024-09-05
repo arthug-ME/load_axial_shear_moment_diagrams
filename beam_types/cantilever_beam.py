@@ -2,8 +2,9 @@
 # 7/9/2024
 
 # This is a program about generating load, axial, shear, and moment graphs based on external forces
-# acted on a simply supported beam. A simply supported beam is one that is statically determinate 
-# and rests on two supports. The graphs are generated based on the external point forces, 
+# acted on a cantilever beam. A cantilever beam is one that is statically determinate
+# and attached to a wall with a fixed support.
+# The graphs are generated based on the external point forces,
 # moments, and distributed loads.
 
 import numpy as np
@@ -274,9 +275,6 @@ def solve_reaction_forces(h_forces, v_forces, moments, dist_loads):
         m_sum += moment['magnitude']
 
     # This finds the sum of the moments caused by vertical forces about point A
-    # CONSIDER: this simplification where location * magnitude will only work if
-    #           the beam is simply supported. We must consider what will happen
-    #           when there is overhang in the system for V2.0 (RH rule must be applied)
     force_cross_distance_sum = 0
     for f_x_d in v_forces:
         force_cross_distance_sum += f_x_d['location'] * f_x_d['magnitude']
