@@ -554,7 +554,7 @@ def moment_diagram(ax, inputted_length, total_v_forces,
     length_unit = 'm' if unit_system == 'metric' else 'ft'
     force_unit = 'N' if unit_system == 'metric' else 'lb'
 
-    x_values = np.linspace(-1e-10, inputted_length, 1000)
+    x_values = np.linspace(-1e-10, inputted_length, 5000)
     # -1e-10 is here so that the initial jump is correctly displayed. If we started
     # at x = 0, there will be no space to plot the initial jump
     y_values = np.array([shear_force_at_point(x, total_v_forces, dist_loads) for x in x_values])
