@@ -476,7 +476,7 @@ def axial_diagram(ax, inputted_length, h_forces, total_h_forces, unit_system):
     ax.set_title("Axial Force Diagram")
     ax.set_xlabel(f"Position ({length_unit})")
     ax.set_ylabel(f"Axial Force ({force_unit})")
-    ax.legend()
+    ax.legend(prop={'size': 8})
     ax.grid(True)
 
 
@@ -542,7 +542,7 @@ def shear_diagram(ax, inputted_length, v_forces, total_v_forces, dist_loads, uni
     ax.set_title("Shear Force Diagram")
     ax.set_xlabel(f"Position ({length_unit})")
     ax.set_ylabel(f"Shear Force ({force_unit})")
-    ax.legend()
+    ax.legend(prop={'size': 8})
     ax.grid(True)
 
 
@@ -633,7 +633,7 @@ def moment_diagram(ax, inputted_length, total_v_forces,
     ax.set_title("Moment Diagram")
     ax.set_xlabel(f"Position ({length_unit})")
     ax.set_ylabel(f"Moment ({length_unit}*{force_unit})")
-    ax.legend()
+    ax.legend(prop={'size': 8})
     ax.grid(True)
 
 
