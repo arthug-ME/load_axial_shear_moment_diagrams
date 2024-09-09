@@ -31,6 +31,7 @@ def unit_system_type():
 # Post: This prompts the user to input the length of the beam and then returns the length as a
 # #     float value.
 def beam_length():
+    print()
     while True:
         try:
             inputted_length = float(input("Please input the length of the beam: "))
@@ -684,7 +685,8 @@ def scale_functions(dist_loads, target_max=2):
 # Pre: Takes in h_forces, total_v_forces, moments, and inputtedLength
 # Post: Plots a FBD of the beam otherwise known as the load diagram. This does not consider
 #       loads yet. This is only a 1 dimensional representation
-def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, scaled_loads, unit_system, dist_loads):
+def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length,
+                 A_x, scaled_loads, unit_system, dist_loads):
     length_unit = 'm' if unit_system == 'metric' else 'ft'
     force_unit = 'N' if unit_system == 'metric' else 'lb'
 
@@ -697,10 +699,12 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, sc
 
         if magnitude < 0:
             ax.arrow(location, 0, 0, -1, head_width=0.1, head_length=0.1, fc='b', ec='b', zorder=2)
-            ax.text(location, -1.2, f"{abs(magnitude)} {force_unit}", ha='center', va='top', color='b', zorder=2)
+            ax.text(location, -1.2, f"{abs(magnitude)} {force_unit}",
+                    ha='center', va='top', color='b', zorder=2)
         elif magnitude > 0:
             ax.arrow(location, 0, 0, 1, head_width=0.1, head_length=0.1, fc='b', ec='b', zorder=2)
-            ax.text(location, 1.2, f"{magnitude} {force_unit}", ha='center', va='bottom', color='b', zorder=2)
+            ax.text(location, 1.2, f"{magnitude} {force_unit}",
+                    ha='center', va='bottom', color='b', zorder=2)
 
     # IMPORTANT: initial_shear_force_location is created so that when the supports are able to
     #            be moved around, the location of the shear force at the support is not hard
@@ -723,10 +727,12 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, sc
 
         if magnitude < 0:
             ax.arrow(location, 0, -1, 0, head_width=0.1, head_length=0.1, fc='b', ec='b', zorder=2)
-            ax.text(location - 0.5, -0.2, f"{abs(magnitude)} {force_unit}", ha='center', color='b', zorder=2)
+            ax.text(location - 0.5, -0.2, f"{abs(magnitude)} {force_unit}",
+                    ha='center', color='b', zorder=2)
         elif magnitude > 0:
             ax.arrow(location, 0, 1, 0, head_width=0.1, head_length=0.1, fc='b', ec='b', zorder=2)
-            ax.text(location + 0.5, -0.2, f"{magnitude} {force_unit}", ha='center', color='b', zorder=2)
+            ax.text(location + 0.5, -0.2, f"{magnitude} {force_unit}",
+                    ha='center', color='b', zorder=2)
 
     # This make the moments
     for moment in moments:
@@ -754,7 +760,8 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, sc
 
         # Add the arrow to the plot
         ax.add_patch(arrow)
-        ax.text(location, 0.5, f"{abs(magnitude)} {length_unit}*{force_unit}", ha='center', va='top', color='b')
+        ax.text(location, 0.5, f"{abs(magnitude)} {length_unit}*{force_unit}",
+                ha='center', va='top', color='b')
 
         # This creates the dist load graph
         for load in scaled_loads:
@@ -794,7 +801,8 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, sc
             # Distributed load annotations
             midpoint = (start + end) / 2
             function_text = f"Function: w(x) = {function.evalf(4)} {force_unit}/{length_unit}"
-            ax.text(midpoint, 2.1, function_text, ha='center', va='bottom', color='red', fontsize=12)
+            ax.text(midpoint, 2.1, function_text, ha='center',
+                    va='bottom', color='red', fontsize=12)
 
     ax.set_xlim(-0.5, inputted_length + 0.5)
     ax.set_ylim(-2.5, 2.5)
