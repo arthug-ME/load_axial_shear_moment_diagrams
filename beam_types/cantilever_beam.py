@@ -645,6 +645,10 @@ def moment_diagram(ax, inputted_length, total_v_forces,
 def scale_functions(dist_loads, target_max=2):
     max_values = []
 
+    if dist_loads == []:
+        scaled_loads = []
+        return scaled_loads
+
     # Calculate max value for each function
     for load in dist_loads:
         start = load['start']
