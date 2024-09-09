@@ -731,7 +731,7 @@ def scale_functions(dist_loads, target_max=2):
 # Pre: Takes in h_forces, total_v_forces, moments, and inputtedLength
 # Post: Plots a FBD of the beam otherwise known as the load diagram. This does not consider
 #       loads yet. This is only a 1 dimensional representation
-def load_diagram(ax, total_h_forces, total_v_forces, moments, inputted_length, dist_loads, unit_system):
+def load_diagram(ax, total_h_forces, total_v_forces, moments, inputted_length, scaled_loads, unit_system, dist_loads):
     length_unit = 'm' if unit_system == 'metric' else 'ft'
     force_unit = 'N' if unit_system == 'metric' else 'lb'
 
@@ -788,7 +788,8 @@ def load_diagram(ax, total_h_forces, total_v_forces, moments, inputted_length, d
         ax.add_patch(arrow)
         ax.text(location, 0.5, f"{abs(magnitude)} {length_unit}*{force_unit}", ha='center', va='top', color='b')
 
-    for load in dist_loads:
+    # This creates the dist load graph
+    for load in scaled_loads:
         start = load['start']
         end = load['end']
         function = load['function']
@@ -801,11 +802,6 @@ def load_diagram(ax, total_h_forces, total_v_forces, moments, inputted_length, d
             x = sp.Symbol('x')
             func = sp.lambdify(x, function, 'numpy')
             y_vals = func(x_vals)
-
-        # Distributed load annotations
-        midpoint = (start + end) / 2
-        function_text = f"Function: w(x) = {function.evalf(4)} {force_unit}/{length_unit}"
-        ax.text(midpoint, 2.1, function_text, ha='center', va='bottom', color='red', fontsize=12)
 
         # Add arrows. The arrows start on the function line and end on the beam (x-axis)
         num_arrows = int((end - start) * 2)
@@ -820,6 +816,17 @@ def load_diagram(ax, total_h_forces, total_v_forces, moments, inputted_length, d
                         arrowprops=dict(arrowstyle='->', color='red', lw=1))
 
         ax.plot(x_vals, y_vals, color='red', label=f'{function}')
+
+    # This labels the dist load function
+    for load in dist_loads:
+        start = load['start']
+        end = load['end']
+        function = load['function']
+
+        # Distributed load annotations
+        midpoint = (start + end) / 2
+        function_text = f"Function: w(x) = {function.evalf(4)} {force_unit}/{length_unit}"
+        ax.text(midpoint, 2.1, function_text, ha='center', va='bottom', color='red', fontsize=12)
 
     ax.set_xlim(-0.5, inputted_length + 0.5)
     ax.set_ylim(-2.5, 2.5)
@@ -868,7 +875,7 @@ def main():
     # stores the scaled functions
 
     fig, ax = plt.subplots(figsize=(12, 16))
-    load_diagram(ax, total_h_forces, total_v_forces, moments, inputted_length, scaled_loads, unit_system)
+    load_diagram(ax, total_h_forces, total_v_forces, moments, inputted_length, scaled_loads, unit_system, dist_loads)
 
     if h_forces == []:
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 12))
