@@ -607,6 +607,7 @@ def moment_diagram(ax, inputted_length, total_v_forces, moments,
                    v_forces, dist_loads, unit_system):
     length_unit = 'm' if unit_system == 'metric' else 'ft'
     force_unit = 'N' if unit_system == 'metric' else 'lb'
+    moment_unit = 'N*m' if unit_system == 'metric' else 'ft*lb'
 
     x_values = np.linspace(-1e-10, inputted_length, 5000)
     # -1e-10 is here so that the initial jump is correctly displayed. If we started
@@ -629,7 +630,7 @@ def moment_diagram(ax, inputted_length, total_v_forces, moments,
         magnitude = force['magnitude']
         plt.axvline(x=location, linestyle='--',
                     label=f'Shear Force at {location} {length_unit}, '
-                          f'{magnitude} {length_unit}*{force_unit}')
+                          f'{magnitude} {moment_unit}')
 
     # Plot the last two forces (roller and pin reactions)
     # The roller and pin reaction are appended to the end of the dictionary
@@ -657,7 +658,7 @@ def moment_diagram(ax, inputted_length, total_v_forces, moments,
         magnitude = moment['magnitude']
         plt.axvline(x=location, linestyle='--', color='red',
                     label=f'Moment at {location} {length_unit}, '
-                          f'{magnitude} {length_unit}*{force_unit}')
+                          f'{magnitude} {moment_unit}')
 
     # Find the maximum absolute value and its corresponding x value
     max_index = np.argmax(np.abs(moment_values))
@@ -681,7 +682,7 @@ def moment_diagram(ax, inputted_length, total_v_forces, moments,
         xytext = (max_x, max_y * 1.5)
 
     # Label the maximum absolute value
-    ax.annotate(f'Max |Moment|: {abs(max_y):.2f} {length_unit}*{force_unit}\n'
+    ax.annotate(f'Max |Moment|: {abs(max_y):.2f} {moment_unit}\n'
                 f'at x = {max_x:.2f} {length_unit}',
                 xy=(max_x, max_y),
                 xytext=xytext,
@@ -694,7 +695,7 @@ def moment_diagram(ax, inputted_length, total_v_forces, moments,
     ax.plot(x_values, moment_values, label="Moment Diagram", color='g')
     ax.set_title("Moment Diagram")
     ax.set_xlabel(f"Position ({length_unit})")
-    ax.set_ylabel(f"Moment ({length_unit}*{force_unit})")
+    ax.set_ylabel(f"Moment ({moment_unit})")
     ax.legend(prop={'size': 8})
     ax.grid(True)
 
@@ -750,6 +751,7 @@ def load_diagram(ax, total_h_forces, total_v_forces, moments, inputted_length,
                  scaled_loads, unit_system, dist_loads):
     length_unit = 'm' if unit_system == 'metric' else 'ft'
     force_unit = 'N' if unit_system == 'metric' else 'lb'
+    moment_unit = 'N*m' if unit_system == 'metric' else 'ft*lb'
 
     # Draw the beam
     ax.plot([0, inputted_length], [0, 0], 'k-', lw=5)
@@ -806,7 +808,7 @@ def load_diagram(ax, total_h_forces, total_v_forces, moments, inputted_length,
 
         # Add the arrow to the plot
         ax.add_patch(arrow)
-        ax.text(location, 0.5, f"{abs(magnitude)} {length_unit}*{force_unit}",
+        ax.text(location, 0.5, f"{abs(magnitude)} {moment_unit}",
                 ha='center', va='top', color='b')
 
     # This creates the dist load graph
