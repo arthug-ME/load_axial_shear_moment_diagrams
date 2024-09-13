@@ -765,46 +765,46 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length,
         ax.text(location, 0.5, f"{abs(magnitude)} {moment_unit}",
                 ha='center', va='top', color='b')
 
-        # This creates the dist load graph
-        for load in scaled_loads:
-            start = load['start']
-            end = load['end']
-            function = load['function']
+    # This creates the dist load graph
+    for load in scaled_loads:
+        start = load['start']
+        end = load['end']
+        function = load['function']
 
-            x_vals = np.linspace(start, end, 100)
+        x_vals = np.linspace(start, end, 100)
 
-            if function.is_constant():
-                y_vals = np.full_like(x_vals, float(function))
-            else:
-                x = sp.Symbol('x')
-                func = sp.lambdify(x, function, 'numpy')
-                y_vals = func(x_vals)
+        if function.is_constant():
+            y_vals = np.full_like(x_vals, float(function))
+        else:
+            x = sp.Symbol('x')
+            func = sp.lambdify(x, function, 'numpy')
+            y_vals = func(x_vals)
 
-            # Add arrows. The arrows start on the function line and end on the beam (x-axis)
-            num_arrows = int((end - start) * 2)
-            arrow_x_vals = np.linspace(start, end, num_arrows)
-            if function.is_constant():
-                arrow_y_vals = np.full_like(arrow_x_vals, float(function))
-            else:
-                arrow_y_vals = func(arrow_x_vals)
+        # Add arrows. The arrows start on the function line and end on the beam (x-axis)
+        num_arrows = int((end - start) * 2)
+        arrow_x_vals = np.linspace(start, end, num_arrows)
+        if function.is_constant():
+            arrow_y_vals = np.full_like(arrow_x_vals, float(function))
+        else:
+            arrow_y_vals = func(arrow_x_vals)
 
-            for x_arrow, y_arrow in zip(arrow_x_vals, arrow_y_vals):
-                ax.annotate('', xy=(x_arrow, 0), xytext=(x_arrow, y_arrow),
-                            arrowprops=dict(arrowstyle='->', color='red', lw=1))
+        for x_arrow, y_arrow in zip(arrow_x_vals, arrow_y_vals):
+            ax.annotate('', xy=(x_arrow, 0), xytext=(x_arrow, y_arrow),
+                        arrowprops=dict(arrowstyle='->', color='red', lw=1))
 
-            ax.plot(x_vals, y_vals, color='red', label=f'{function}')
+        ax.plot(x_vals, y_vals, color='red', label=f'{function}')
 
-        # This labels the dist load function
-        for load in dist_loads:
-            start = load['start']
-            end = load['end']
-            function = load['function']
+    # This labels the dist load function
+    for load in dist_loads:
+        start = load['start']
+        end = load['end']
+        function = load['function']
 
-            # Distributed load annotations
-            midpoint = (start + end) / 2
-            function_text = f"Function: w(x) = {function.evalf(4)} {force_unit}/{length_unit}"
-            ax.text(midpoint, 2.1, function_text, ha='center',
-                    va='bottom', color='red', fontsize=12)
+        # Distributed load annotations
+        midpoint = (start + end) / 2
+        function_text = f"Function: w(x) = {function.evalf(4)} {force_unit}/{length_unit}"
+        ax.text(midpoint, 2.1, function_text, ha='center',
+                va='bottom', color='red', fontsize=12)
 
     ax.set_xlim(-0.5, inputted_length + 0.5)
     ax.set_ylim(-2.5, 2.5)
