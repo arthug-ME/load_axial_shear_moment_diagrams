@@ -236,8 +236,8 @@ def distributed_load(inputted_length):
             dist_loads.append(dist_info)
 
         except (sp.SympifyError, ValueError):
-            print("Invalid function. Please enter a valid mathematical "
-                  "function that matplotlib can graph.")
+            print("Invalid function. Please enter a valid mathematical function "
+                  "that matplotlib can graph.")
             print()
             continue
 
@@ -692,8 +692,8 @@ def scale_functions(dist_loads, target_max=2):
 # Pre: Takes in h_forces, total_v_forces, moments, and inputtedLength
 # Post: Plots a FBD of the beam otherwise known as the load diagram. This does not consider
 #       loads yet. This is only a 1 dimensional representation
-def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x,
-                 scaled_loads, unit_system, dist_loads):
+def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length,
+                 A_x, scaled_loads, unit_system, dist_loads):
     length_unit = 'm' if unit_system == 'metric' else 'ft'
     force_unit = 'N' if unit_system == 'metric' else 'lb'
     moment_unit = 'N*m' if unit_system == 'metric' else 'ft*lb'
@@ -809,8 +809,8 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x,
             # Distributed load annotations
             midpoint = (start + end) / 2
             function_text = f"Function: w(x) = {function.evalf(4)} {force_unit}/{length_unit}"
-            ax.text(midpoint, 2.1, function_text, ha='center', va='bottom',
-                    color='red', fontsize=12)
+            ax.text(midpoint, 2.1, function_text, ha='center',
+                    va='bottom', color='red', fontsize=12)
 
     ax.set_xlim(-0.5, inputted_length + 0.5)
     ax.set_ylim(-2.5, 2.5)
@@ -878,7 +878,6 @@ def main():
     plt.tight_layout(pad=3.0)
 
     plt.show()
-
 
 if __name__ == "__main__":
     main()
