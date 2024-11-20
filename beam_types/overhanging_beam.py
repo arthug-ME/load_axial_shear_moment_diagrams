@@ -780,7 +780,7 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
     ax.set_xlim(-0.5, inputted_length + 0.5)
     ax.set_ylim(-2.5, 2.5)
     ax.set_aspect('auto')
-    ax.set_xlabel(f'Length of Beam {length_unit}')
+    ax.set_xlabel(f'Length of Beam ({length_unit})')
     ax.set_title('Load Diagram')
 
     # Hide the y-axis
