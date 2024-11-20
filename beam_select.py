@@ -21,7 +21,8 @@ def introduction():
             if inputted_number.is_integer() and 0 <= inputted_number <= 3:
                 return int(inputted_number)
             else:
-                print("Invalid input. Please choose from these three options and input a whole number.")
+                print("Invalid input. Please choose from these three options"
+                      " and input a whole number.")
         except ValueError:
             print("Invalid input. Please input only a number.")
 

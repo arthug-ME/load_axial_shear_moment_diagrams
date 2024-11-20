@@ -3,7 +3,8 @@
 
 # This is a program about generating load, axial, shear, and moment graphs based on external forces
 # acted on a simply supported beam. A simply supported beam is one that is statically determinate 
-# and rests on two supports. The graphs are generated based on the external point forces, 
+# and rests on two supports, a roller and a pin, on opposite ends of the beam.
+# The graphs are generated based on the external point forces,
 # moments, and distributed loads.
 
 import numpy as np
@@ -17,7 +18,8 @@ from scipy import integrate
 # Post: This prompts the user to input what unit system they will be using
 def unit_system_type():
     while True:
-        unit_system = input('Please input the unit system you need (Enter "metric" or "imperial"): ').strip().lower()
+        unit_system = input('Please input the unit system you need '
+                            '(Enter "metric" or "imperial"): ').strip().lower()
         if unit_system not in ["metric", "imperial"]:
             print("Invalid input. Please try again.")
         else:
@@ -197,7 +199,8 @@ def distributed_load(inputted_length):
             end_location = float(location_input)
 
             if end_location == start_location:
-                print("The ending location cannot be the same as the starting location. Please try again.")
+                print("The ending location cannot be the same as the starting location. "
+                      "Please try again.")
                 continue
 
             if not (start_location < end_location <= inputted_length):
@@ -233,7 +236,8 @@ def distributed_load(inputted_length):
             dist_loads.append(dist_info)
 
         except (sp.SympifyError, ValueError):
-            print("Invalid function. Please enter a valid mathematical function that matplotlib can graph.")
+            print("Invalid function. Please enter a valid mathematical function "
+                  "that matplotlib can graph.")
             print()
             continue
 
@@ -479,7 +483,7 @@ def axial_diagram(ax, inputted_length, h_forces, total_h_forces, unit_system):
     ax.set_title("Axial Force Diagram")
     ax.set_xlabel(f"Position ({length_unit})")
     ax.set_ylabel(f"Axial Force ({force_unit})")
-    ax.legend()
+    ax.legend(prop={'size': 8})
     ax.grid(True)
 
 
@@ -545,7 +549,7 @@ def shear_diagram(ax, inputted_length, v_forces, total_v_forces, dist_loads, uni
     ax.set_title("Shear Force Diagram")
     ax.set_xlabel(f"Position ({length_unit})")
     ax.set_ylabel(f"Shear Force ({force_unit})")
-    ax.legend()
+    ax.legend(prop={'size': 8})
     ax.grid(True)
 
 
@@ -556,8 +560,9 @@ def moment_diagram(ax, inputted_length, total_v_forces, moments,
                    v_forces, dist_loads, unit_system):
     length_unit = 'm' if unit_system == 'metric' else 'ft'
     force_unit = 'N' if unit_system == 'metric' else 'lb'
+    moment_unit = 'N*m' if unit_system == 'metric' else 'ft*lb'
 
-    x_values = np.linspace(-1e-10, inputted_length, 1000)
+    x_values = np.linspace(-1e-10, inputted_length, 5000)
     # -1e-10 is here so that the initial jump is correctly displayed. If we started
     # at x = 0, there will be no space to plot the initial jump
     y_values = np.array([shear_force_at_point(x, total_v_forces, dist_loads) for x in x_values])
@@ -578,7 +583,7 @@ def moment_diagram(ax, inputted_length, total_v_forces, moments,
         magnitude = force['magnitude']
         plt.axvline(x=location, linestyle='--',
                     label=f'Shear Force at {location} {length_unit}, '
-                          f'{magnitude} {force_unit}*{length_unit}')
+                          f'{magnitude} {moment_unit}')
 
     # This plots a vertical line for the start and end of distributed loads
     for load in dist_loads:
@@ -598,7 +603,7 @@ def moment_diagram(ax, inputted_length, total_v_forces, moments,
         magnitude = moment['magnitude']
         plt.axvline(x=location, linestyle='--', color='red',
                     label=f'Moment at {location} {length_unit}, '
-                          f'{magnitude} {force_unit}*{length_unit}')
+                          f'{magnitude} {moment_unit}')
 
     # Find the maximum absolute value and its corresponding x value
     max_index = np.argmax(np.abs(moment_values))
@@ -622,7 +627,7 @@ def moment_diagram(ax, inputted_length, total_v_forces, moments,
         xytext = (max_x, max_y * 1.5)
 
     # Label the maximum absolute value
-    ax.annotate(f'Max |Moment|: {abs(max_y):.2f} {force_unit}*{length_unit}\nat '
+    ax.annotate(f'Max |Moment|: {abs(max_y):.2f} {moment_unit}\nat '
                 f'x = {max_x:.2f} {length_unit}',
                 xy=(max_x, max_y),
                 xytext=xytext,
@@ -635,23 +640,66 @@ def moment_diagram(ax, inputted_length, total_v_forces, moments,
     ax.plot(x_values, moment_values, label="Moment Diagram", color='g')
     ax.set_title("Moment Diagram")
     ax.set_xlabel(f"Position ({length_unit})")
-    ax.set_ylabel(f"Moment ({force_unit}*{length_unit})")
-    ax.legend()
+    ax.set_ylabel(f"Moment ({moment_unit})")
+    ax.legend(prop={'size': 8})
     ax.grid(True)
+
+
+# Pre: Accepts dist_loads and a variable indicating our desired range for graphing the functions
+#      We want the functions to be between [-2,2] in the y direction
+# Post: Finds the max value that any function reaches and scales all the functions down accordingly
+#       so that all the functions ranges are between [-2,2] while keeping relative heights
+#       the same
+def scale_functions(dist_loads, target_max=2):
+    max_values = []
+
+    if dist_loads == []:
+        scaled_loads = []
+        return scaled_loads
+
+    # Calculate max value for each function
+    for load in dist_loads:
+        start = load['start']
+        end = load['end']
+        function = load['function']
+        x = sp.Symbol('x')
+
+        # If the function is constant, use the value directly
+        if function.is_constant():
+            max_value = float(function)
+        else:
+            # Calculate the maximum value within the given interval
+            func = sp.lambdify(x, function, 'numpy')
+            x_vals = np.linspace(start, end, 100)
+            y_vals = func(x_vals)
+            max_value = max(y_vals)
+
+        max_values.append(max_value)
+
+    global_max = max(max_values)
+    scaling_factor = target_max / global_max
+
+    # Create a new list with scaled functions
+    scaled_loads = []
+    for load in dist_loads:
+        scaled_load = load.copy()
+        scaled_load['function'] = load['function'] * scaling_factor
+        scaled_loads.append(scaled_load)
+
+    return scaled_loads
 
 
 # Pre: Takes in h_forces, total_v_forces, moments, and inputtedLength
 # Post: Plots a FBD of the beam otherwise known as the load diagram. This does not consider
 #       loads yet. This is only a 1 dimensional representation
-def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, dist_loads, unit_system):
+def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length,
+                 A_x, scaled_loads, unit_system, dist_loads):
     length_unit = 'm' if unit_system == 'metric' else 'ft'
     force_unit = 'N' if unit_system == 'metric' else 'lb'
+    moment_unit = 'N*m' if unit_system == 'metric' else 'ft*lb'
 
     # Draw the beam
     ax.plot([0, inputted_length], [0, 0], 'k-', lw=5)
-
-    y_max = 1.5  # Start with default ylim value
-    y_min = -1.5
 
     for force in total_v_forces:
         location = force['location']
@@ -659,10 +707,12 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
 
         if magnitude < 0:
             ax.arrow(location, 0, 0, -1, head_width=0.1, head_length=0.1, fc='b', ec='b', zorder=2)
-            ax.text(location, -1.2, f"{abs(magnitude)} {force_unit}", ha='center', va='top', color='b', zorder=2)
+            ax.text(location, -1.2, f"{abs(magnitude)} {force_unit}",
+                    ha='center', va='top', color='b', zorder=2)
         elif magnitude > 0:
             ax.arrow(location, 0, 0, 1, head_width=0.1, head_length=0.1, fc='b', ec='b', zorder=2)
-            ax.text(location, 1.2, f"{magnitude} {force_unit}", ha='center', va='bottom', color='b', zorder=2)
+            ax.text(location, 1.2, f"{magnitude} {force_unit}",
+                    ha='center', va='bottom', color='b', zorder=2)
 
     # IMPORTANT: initial_shear_force_location is created so that when the supports are able to
     #            be moved around, the location of the shear force at the support is not hard
@@ -685,10 +735,12 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
 
         if magnitude < 0:
             ax.arrow(location, 0, -1, 0, head_width=0.1, head_length=0.1, fc='b', ec='b', zorder=2)
-            ax.text(location - 0.5, -0.2, f"{abs(magnitude)} {force_unit}", ha='center', color='b', zorder=2)
+            ax.text(location - 0.5, -0.2, f"{abs(magnitude)} {force_unit}",
+                    ha='center', color='b', zorder=2)
         elif magnitude > 0:
             ax.arrow(location, 0, 1, 0, head_width=0.1, head_length=0.1, fc='b', ec='b', zorder=2)
-            ax.text(location + 0.5, -0.2, f"{magnitude} {force_unit}", ha='center', color='b', zorder=2)
+            ax.text(location + 0.5, -0.2, f"{magnitude} {force_unit}",
+                    ha='center', color='b', zorder=2)
 
     # This make the moments
     for moment in moments:
@@ -716,9 +768,11 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
 
         # Add the arrow to the plot
         ax.add_patch(arrow)
-        ax.text(location, 0.5, f"{abs(magnitude)} {force_unit}*{length_unit}", ha='center', va='top', color='b')
+        ax.text(location, 0.5, f"{abs(magnitude)} {moment_unit}",
+                ha='center', va='top', color='b')
 
-    for load in dist_loads:
+    # This creates the dist load graph
+    for load in scaled_loads:
         start = load['start']
         end = load['end']
         function = load['function']
@@ -732,19 +786,6 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
             func = sp.lambdify(x, function, 'numpy')
             y_vals = func(x_vals)
 
-        # Scale the distributed load values to fit within [-2, 2]
-        y_vals_scaled = y_vals * 2 / max(abs(y_vals.min()), abs(y_vals.max()))
-
-        ax.plot(x_vals, y_vals_scaled, 'r-')
-
-        # Distributed load annotations
-        midpoint = (start + end) / 2
-        function_text = f"Function: w(x) = {function} {force_unit}/{length_unit}"
-        ax.text(midpoint, 2.1, function_text, ha='center', va='bottom', color='red', fontsize=12)
-
-        y_min = min(y_min, min(y_vals_scaled))
-        y_max = max(y_max, max(y_vals_scaled))
-
         # Add arrows. The arrows start on the function line and end on the beam (x-axis)
         num_arrows = int((end - start) * 2)
         arrow_x_vals = np.linspace(start, end, num_arrows)
@@ -754,9 +795,22 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
             arrow_y_vals = func(arrow_x_vals)
 
         for x_arrow, y_arrow in zip(arrow_x_vals, arrow_y_vals):
-            y_arrow_scaled = y_arrow * 2 / max(abs(y_vals.min()), abs(y_vals.max()))
-            ax.annotate('', xy=(x_arrow, 0), xytext=(x_arrow, y_arrow_scaled),
+            ax.annotate('', xy=(x_arrow, 0), xytext=(x_arrow, y_arrow),
                         arrowprops=dict(arrowstyle='->', color='red', lw=1))
+
+        ax.plot(x_vals, y_vals, color='red', label=f'{function}')
+
+    # This labels the dist load function
+    for load in dist_loads:
+        start = load['start']
+        end = load['end']
+        function = load['function']
+
+        # Distributed load annotations
+        midpoint = (start + end) / 2
+        function_text = f"Function: w(x) = {function.evalf(4)} {force_unit}/{length_unit}"
+        ax.text(midpoint, 2.1, function_text, ha='center',
+                va='bottom', color='red', fontsize=12)
 
     ax.set_xlim(-0.5, inputted_length + 0.5)
     ax.set_ylim(-2.5, 2.5)
@@ -765,7 +819,6 @@ def load_diagram(ax, h_forces, total_v_forces, moments, inputted_length, A_x, di
     ax.set_title('Load Diagram')
 
     # Hide the y-axis
-    ax.get_yaxis().set_visible(False)
     ax.get_yaxis().set_visible(False)
 
     plt.grid(True)
@@ -786,7 +839,8 @@ def main():
     dist_loads = distributed_load(inputted_length)
     # This stores the return list for the distributed loads
 
-    rxn_RREF_array = solve_reaction_forces(inputted_length, h_forces, v_forces, moments, dist_loads)
+    rxn_RREF_array = solve_reaction_forces(inputted_length, h_forces,
+                                           v_forces, moments, dist_loads)
     # This stores the return list for the solved rxn forces
 
     A_y = find_A_y_rxn(rxn_RREF_array)
@@ -799,28 +853,31 @@ def main():
     total_h_forces = find_total_h_forces(h_forces, A_x)
     # This stores the return list for the total h forces
 
+    scaled_loads = scale_functions(dist_loads)
+    # stores the scaled functions
+
     fig, ax = plt.subplots(figsize=(12, 16))
     load_diagram(ax, h_forces, total_v_forces, moments, inputted_length,
-                 A_x, dist_loads, unit_system)
+                 A_x, scaled_loads, unit_system, dist_loads)
+
+    if h_forces == []:
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 12))
+        shear_diagram(ax1, inputted_length, v_forces, total_v_forces, dist_loads, unit_system)
+        moment_diagram(ax2, inputted_length, total_v_forces, moments,
+                       v_forces, dist_loads, unit_system)
     # This only prints out the shear and moment graph if there are no axial forces.
     # If there are axial forces, all three graphs will be graphed
-    if A_x != 0:
+    else:
         fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(12, 16))
         axial_diagram(ax1, inputted_length, h_forces, total_h_forces, unit_system)
         shear_diagram(ax2, inputted_length, v_forces, total_v_forces, dist_loads, unit_system)
         moment_diagram(ax3, inputted_length, total_v_forces, moments,
-                       v_forces, dist_loads, unit_system)
-    else:
-        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 12))
-        shear_diagram(ax1, inputted_length, v_forces, total_v_forces, dist_loads, unit_system)
-        moment_diagram(ax2, inputted_length, total_v_forces, moments,
                        v_forces, dist_loads, unit_system)
 
     # This avoids overlapping of text
     plt.tight_layout(pad=3.0)
 
     plt.show()
-
 
 if __name__ == "__main__":
     main()

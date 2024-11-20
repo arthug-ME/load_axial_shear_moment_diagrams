@@ -15,24 +15,24 @@ Load Diagrams:
 - Essentially a Free-Body Diagram of the beam
 - It shows where the external forces and moments are applied
 
-For a system to be in equilibrium, external forces must be balanced by an internal force as stated by Newton's 3rd law
-- Axial forces, shear forces, and bending moments are 3rd law force pairs to external forces and moments
+For a system to be in equilibrium, there must be no net forces
+- Axial forces, shear forces, and bending moments all sum to zero in equilibrium by Newton's Second Law 
 
 
 Axial Forces (*N* in diagrams):
-- The internal compression or tension forces along the length of the beam
+- Axial forces are internal compression or tension forces along the length of the beam
 - External forces can cause the beam to stretch or compress 
-- The axial force diagram shows the internal forces at all points such that stretching or compressing do not occur
+- The axial force diagram shows the internal horizontal forces at all points 
 
 Shear Forces (*V* in diagrams):
-- The internal forces that act perpendicular to the beam
+- Shear forces are the internal forces that act perpendicular to the beam
 - External forces can cause the beam to slide or deform one part of the beam relative to the other part of the beam
-- The shear force diagram shows the internal forces at all points such that the beam does not slide or shear in two
+- The shear force diagram shows the internal vertical forces at all points 
 
 Bending Moments (*M* in diagrams):
-- The internal bending moments along the beam 
+- Bending moments are the internal bending moments along the beam 
 - External forces can cause the beam to bend (this is a moment)
-- The bending moment diagram shows the bending moment at all points such that the beam does not bend 
+- The bending moment diagram shows the bending moment at all points 
 
 ## What are the Three Beam Types?
 *Image from [SkyCiv.com](https://skyciv.com/docs/tutorials/beam-tutorials/types-of-beams/)*
@@ -61,20 +61,21 @@ pip install -r requirements.txt
 
 ## Example 
 ### Input
-![image](https://github.com/user-attachments/assets/524bfb81-e30f-4546-86dd-3caea90fc7d5)
-![image](https://github.com/user-attachments/assets/ebbb3155-8a64-4565-9d55-5021eca8f55d)
+![image](https://github.com/user-attachments/assets/61fae053-9da5-4349-90d2-f7f9a0136a61)
+![image](https://github.com/user-attachments/assets/f2fe7239-9193-47fd-bbc0-1002488dc6ef)
 
 ### Output
-![image](https://github.com/user-attachments/assets/8ba7c20a-b252-4fe4-bdfb-4b6e64c44482)
-![image](https://github.com/user-attachments/assets/a48ab41f-c3b4-4036-a5db-90af903e22ee)
+![image](https://github.com/user-attachments/assets/54208d12-34ea-4b26-a29f-d60967583d81)
+![image](https://github.com/user-attachments/assets/9ca97a53-4cc3-421c-ad94-82e4b3655bb3)
 
 ## Using Distributed Load Functions
 This program was made to handle any type of function as long as it is inputted in a format that matplotlib can graph (i.e. *w(x) = 3x* is WRONG but *w(x) = 3 * x* is CORRECT). Here is an example where *w(x) = 120 * sqrt(x/2)* is used.
-![image](https://github.com/user-attachments/assets/ca15ffcb-7b83-4ad9-bb7c-cd38d3f1452d)
-![image](https://github.com/user-attachments/assets/2eb9b2aa-41ba-422a-9949-94bd21840baf)
+![image](https://github.com/user-attachments/assets/22538725-0da8-4fb2-9eb1-4f50b2ee2a95)
+![image](https://github.com/user-attachments/assets/b74432ed-48a7-4ad0-aa86-2b4e2a122daa)
 
-It is important to shift the function as needed. If we wanted a triangular distributed load that increases by 2 kN / m on the interval from 3 to 6, we would input *w(x) = 2 * (x - 3)* and NOT *w(x) = 2 * x*. 
-![image](https://github.com/user-attachments/assets/050a07df-d52c-4428-bb2d-97f5d2c0e9b3)
+It is important to shift the function as needed. If we wanted a triangular distributed load that increases by 2 N / m on the interval from 3 to 6, we would input *w(x) = 2 * (x - 3)* and NOT *w(x) = 2 * x*. 
+![image](https://github.com/user-attachments/assets/df4ef1de-a385-419b-b61d-6128ab9d08e7)
+
 
 
 
